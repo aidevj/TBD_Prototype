@@ -287,6 +287,7 @@
     <Compile Include="Assets\HexMetrics.cs" />
     <Compile Include="Assets\Scripts\Ability.cs" />
     <Compile Include="Assets\Scripts\Enemy.cs" />
+    <Compile Include="Assets\Scripts\SceneManagerScript.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
