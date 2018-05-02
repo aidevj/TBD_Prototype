@@ -11,8 +11,9 @@ public class HexGrid : MonoBehaviour {
 
 	// debugging options
 	public bool AllowHexClick = true;
+	public bool ShowCoordinates = true;
 
-	public UnitController ControllerScript; // needs reference to the controller script in order to track unit movement
+	private UnitController ControllerScript; 				// Reference to the controller script in order to track unit movement. Found in Start()
 	private Transform unitTransform;
 
 	public int width = 6;
@@ -24,10 +25,10 @@ public class HexGrid : MonoBehaviour {
 	Canvas gridCanvas;
 	HexMesh hexMesh;
 
-	HexCell[] cells;
+	HexCell[] cells;										// Array of hexCells in the Grid
 
 	public Color defaultColor = Color.white;
-	public Color activeColor = Color.cyan; // "touched"
+	public Color activeColor = Color.cyan; 					// "touched"
 
 	private string lastCoordinatesAsString = "";
 
@@ -48,7 +49,7 @@ public class HexGrid : MonoBehaviour {
 		// after the grid has awoken
 		hexMesh.Triangulate (cells);
 
-		// get transform from tracked unit
+		// get reference to ControllerManager's UnitController script
 		ControllerScript = GameObject.Find("ControllerManager").GetComponent<UnitController>();
 
 	}
@@ -92,12 +93,10 @@ public class HexGrid : MonoBehaviour {
 		lastCoordinatesAsString = coordinates.ToString ();
 	}
 
-	void ResetGridColor() {
-		
-	}
+	void ResetGridColor() {}
 
 	/// <summary>
-	/// Creates cells at the given positions.
+	/// Creates cells at the given positions with all defaults.
 	/// </summary>
 	/// <param name="x">The x position.</param>
 	/// <param name="z">The z position.</param>

@@ -62,6 +62,7 @@
      <Compile Include="Assets\Scripts\HexMetrics.cs" />
      <Compile Include="Assets\Scripts\HUDManager.cs" />
      <Compile Include="Assets\Scripts\SceneManagerScript.cs" />
+     <Compile Include="Assets\Scripts\TerrainType.cs" />
      <Compile Include="Assets\Scripts\Unit.cs" />
      <Compile Include="Assets\Scripts\UnitController.cs" />
      <None Include="Assets\Shaders\VertexColors.shader" />
