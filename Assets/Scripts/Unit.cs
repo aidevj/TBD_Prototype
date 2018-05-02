@@ -6,7 +6,11 @@ using UnityEngine;
 /// </summary>
 public class Unit : MonoBehaviour{
 
-	// Attributes
+	// 
+	public HexCoordinates coordinates;							// Unit's location on the hexgrid
+	public HexCoordinates initialCoord;							// to be used for pathfinding
+
+	// Status Attributes
 	[SerializeField]
 	private string name;
 

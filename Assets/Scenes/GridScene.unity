@@ -488,7 +488,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 721a10e6cbd63474981e4e55427fa845, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeUnitText: {fileID: 0}
+  UnitControllerScript: {fileID: 0}
+  activeUnitObj: {fileID: 1391108495}
 --- !u!1 &565515771
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,6 +612,7 @@ Transform:
   - {fileID: 909581473}
   - {fileID: 104164507}
   - {fileID: 2141935088}
+  - {fileID: 843888236}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -676,6 +678,88 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &843888235
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 733985516}
+    m_Modifications:
+    - target: {fileID: 4206359811701502, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 42.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206359811701502, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206359811701502, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 23.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206359811701502, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206359811701502, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206359811701502, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206359811701502, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206359811701502, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1575105521277320, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+      propertyPath: m_Name
+      value: Unit_Placeholder3
+      objectReference: {fileID: 0}
+    - target: {fileID: 23427879646289766, guid: 2bd35a42442eccb4da2a669dcbaa786a,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 567a6dc483fa1d144a4ba8e98e09a836, type: 2}
+    - target: {fileID: 4206359811701502, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 10.000013
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206359811701502, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+      propertyPath: m_LocalScale.z
+      value: 10.000013
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 2bd35a42442eccb4da2a669dcbaa786a, type: 2}
+  m_IsPrefabParent: 0
+--- !u!4 &843888236 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4206359811701502, guid: 2bd35a42442eccb4da2a669dcbaa786a,
+    type: 2}
+  m_PrefabInternal: {fileID: 843888235}
+--- !u!1 &843888237 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1575105521277320, guid: 2bd35a42442eccb4da2a669dcbaa786a,
+    type: 2}
+  m_PrefabInternal: {fileID: 843888235}
+--- !u!114 &843888238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 843888237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cdee8ac160545549b0515f5f80078d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: Alicea
+  movelist: []
 --- !u!1 &909581469 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1575105521277320, guid: 2bd35a42442eccb4da2a669dcbaa786a,

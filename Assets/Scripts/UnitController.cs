@@ -11,6 +11,8 @@ public class UnitController : MonoBehaviour {
 	
 	public float speed = 1f;
 
+	private HUDManager HUDManagerScript;						// reference to the HUD Manager Script
+
 	[SerializeField]
 	private List<GameObject> units = new List<GameObject> ();	// list of controllable units
 
@@ -19,8 +21,6 @@ public class UnitController : MonoBehaviour {
 	private Transform unitTransform;
 	private int currentUnitIndex = 0;							// the current index in the list of units
 		
-	public HexCoordinates coordinates;							// Unit's location on the hexgrid
-	public HexCoordinates initialCoord;							// to be used for pathfinding
 
 	// Properties
 	public Transform UnitTransform {
@@ -28,12 +28,16 @@ public class UnitController : MonoBehaviour {
 	}
 
 	void Start () {
+		HUDManagerScript = GameObject.Find ("UICanvas").GetComponent<HUDManager> ();
+
 		unitTransform = controlledUnit.transform;
 
 		// Populate the Units list
 		foreach (Transform child in unitHolderObj.transform) {
 			units.Add (child.gameObject);
 		}
+
+		HUDManagerScript.UpdateActiveUnitText(controlledUnit.GetComponent<Unit>().Name);
 	}
 
 	// Change the Controlled unit to which these controls will now apply
@@ -44,6 +48,9 @@ public class UnitController : MonoBehaviour {
 
 		controlledUnit = units[currentUnitIndex];
 		unitTransform = controlledUnit.transform;
+
+		// change UI
+		HUDManagerScript.UpdateActiveUnitText(controlledUnit.GetComponent<Unit>().Name);
 	}
 
 	void Update () {
