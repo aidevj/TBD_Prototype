@@ -2,33 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour {
+public class Enemy : Unit {
 
-    //list of available moves
-    public Ability[] movelist;
-
-    //attributes
-    private string name;
-
-    private int currentHP;
-    private int maxHP;
-
-    private int currentAP;
-    private int maxAP;
-
-    //cost to move per normal grid hex
-    private int moveCost;
-
-    private string weaponType;
-    private string weaponAff;
-
-    //base stats
-    private int attack;
-    private int defense;
-    private int dexterity;
-    private int endurance;
-    private int intelligence;
-    
+   
 
 	// Use this for initialization
 	void Start () {

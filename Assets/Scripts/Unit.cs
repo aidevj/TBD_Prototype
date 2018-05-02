@@ -12,26 +12,26 @@ public class Unit : MonoBehaviour{
 
 	// Status Attributes
 	[SerializeField]
-	private string name;
+    public string name;
 
-	private int currentHP;
-	private int maxHP;
+    public int currentHP;
+    public int maxHP;
 
-	private int currentAP;
-	private int maxAP;
+    public int currentAP;
+    public int maxAP;
 
-	// Cost to move per normal grid hex
-	private int moveCost;
+    // Cost to move per normal grid hex
+    public int moveCost;
 
-	private string weaponType;
-	private string weaponAff;
+    public string weaponType;
+    public string weaponAff;
 
-	// Base stats
-	private int attack;
-	private int defense;
-	private int dexterity;
-	private int endurance;
-	private int intelligence;
+    // Base stats
+    public int attack;
+    public int defense;
+    public int dexterity;
+    public int endurance;
+    public int intelligence;
 
 	// List of available moves
 	public Ability[] movelist;
