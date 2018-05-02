@@ -10,6 +10,6 @@ public class CameraController : MonoBehaviour {
 	}
 
 	void Update () {
-		transform.Translate (Input.GetAxis ("Horizontal_Camera") * speed, Input.GetAxis ("Vertical_Camera"), 0);
+		transform.Translate (Input.GetAxis ("Horizontal") * speed, Input.GetAxis ("Vertical"), 0);
 	}
 }
