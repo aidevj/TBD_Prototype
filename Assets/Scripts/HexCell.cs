@@ -2,7 +2,11 @@
 
 public class HexCell : MonoBehaviour {
 
+	// Physical Attributes
 	public HexCoordinates coordinates;
 
 	public Color color;
+
+	// Status Attributes
+	public TerrainType terrainType;
 }

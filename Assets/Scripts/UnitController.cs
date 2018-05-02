@@ -11,10 +11,12 @@ public class UnitController : MonoBehaviour {
 	
 	public float speed = 1f;
 
-	private HUDManager HUDManagerScript;						// reference to the HUD Manager Script
+	private HUDManager HUDManagerScript;
 
 	[SerializeField]
 	private List<GameObject> units = new List<GameObject> ();	// list of controllable units
+
+	public bool controllerOn = true;							// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
 
 	public GameObject unitHolderObj;							// object that holds the the unit gameobjects called "Units"
 	public GameObject controlledUnit;							// the Unit to be controlled currently
@@ -54,6 +56,16 @@ public class UnitController : MonoBehaviour {
 	}
 
 	void Update () {
-		unitTransform.Translate (Input.GetAxis ("Horizontal_Player") * speed, Input.GetAxis ("Vertical_Player"), 0);
+		if (controllerOn)
+			unitTransform.Translate (Input.GetAxis ("Horizontal_Player") * speed, Input.GetAxis ("Vertical_Player"), 0);
+	}
+
+	// When the terrain editor is open, disable units and mobility
+	public void DisableController() {
+		controllerOn = false;
+	}
+
+	public void EnableController() {
+		controllerOn = true;
 	}
 }
