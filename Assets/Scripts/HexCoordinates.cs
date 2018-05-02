@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿//Aiden
+using UnityEngine;
 
 /// <summary>
 /// A struct to represent coordinates in a Hex system

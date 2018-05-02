@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿// Aiden
+using UnityEngine;
 using UnityEngine.Collections;
 using UnityEngine.UI;
 
@@ -7,6 +8,12 @@ using UnityEngine.UI;
 /// Also sets coordinates and writes them on grid.
 /// </summary>
 public class HexGrid : MonoBehaviour {
+
+	// debugging options
+	public bool AllowHexClick = true;
+
+	public UnitController ControllerScript; // needs reference to the controller script in order to track unit movement
+	private Transform unitTransform;
 
 	public int width = 6;
 	public int height = 6;
@@ -21,6 +28,8 @@ public class HexGrid : MonoBehaviour {
 
 	public Color defaultColor = Color.white;
 	public Color activeColor = Color.cyan; // "touched"
+
+	private string lastCoordinatesAsString = "";
 
 	void Awake () {
 		cells = new HexCell[height * width];
@@ -38,12 +47,23 @@ public class HexGrid : MonoBehaviour {
 	void Start(){
 		// after the grid has awoken
 		hexMesh.Triangulate (cells);
+
+		// get transform from tracked unit
+		ControllerScript = GameObject.Find("ControllerManager").GetComponent<UnitController>();
+
 	}
 
 	void Update () {
-		if (Input.GetMouseButton(0)) {
-			HandleInput();
+		if (AllowHexClick) {
+			if (Input.GetMouseButton (0)) {
+				HandleInput ();
+			}
 		}
+
+		// Call color changing TouchCell stuff to change at position of the unit
+		unitTransform = ControllerScript.controlledUnit.transform;
+		TouchCell (unitTransform.position);
+
 	}
 
 	void HandleInput () {
@@ -59,12 +79,21 @@ public class HexGrid : MonoBehaviour {
 
 		// to know where we are touching, we have to convert the touch position to hex coordinates
 		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
-		Debug.Log("touched at " + coordinates.ToString());
 
-		int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
-		HexCell cell = cells[index];
-		cell.color = activeColor;
-		hexMesh.Triangulate(cells);
+		if (coordinates.ToString() != lastCoordinatesAsString) {	// only do if its different
+			Debug.Log("touched at " + coordinates.ToString());
+
+			int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
+			HexCell cell = cells[index];
+			cell.color = activeColor;
+			hexMesh.Triangulate(cells);
+		}
+
+		lastCoordinatesAsString = coordinates.ToString ();
+	}
+
+	void ResetGridColor() {
+		
 	}
 
 	/// <summary>
