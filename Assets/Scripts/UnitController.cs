@@ -13,15 +13,15 @@ public class UnitController : MonoBehaviour {
 
 	private HUDManager HUDManagerScript;
 
-	[SerializeField]
-	private List<GameObject> units = new List<GameObject> ();	// list of controllable units
+	//[HideInInspector] 
+	public List<Unit> units = new List<Unit> ();		// ******Cahnge to this later to access the data from units directly
 
-	public bool controllerOn = true;							// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
+	public bool controllerOn = true;					// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
 
-	public GameObject unitHolderObj;							// object that holds the the unit gameobjects called "Units"
-	public GameObject controlledUnit;							// the Unit to be controlled currently
+	public GameObject unitHolderObj;					// gameobject called "Units" that holds all the unit in play
+	public Unit controlledUnit;							// the Unit to be controlled currently
 	private Transform unitTransform;
-	private int currentUnitIndex = 0;							// the current index in the list of units
+	private int currentUnitIndex = 0;					// the current index in the list of units
 		
 
 	// Properties
@@ -32,17 +32,18 @@ public class UnitController : MonoBehaviour {
 	void Start () {
 		HUDManagerScript = GameObject.Find ("UICanvas").GetComponent<HUDManager> ();
 
-		unitTransform = controlledUnit.transform;
-
 		// Populate the Units list
 		foreach (Transform child in unitHolderObj.transform) {
-			units.Add (child.gameObject);
+			units.Add (child.gameObject.GetComponent<Unit>());
 		}
 
-		HUDManagerScript.UpdateActiveUnitText(controlledUnit.GetComponent<Unit>().Name);
+		// Default the first in the list to the current controlled unit
+		controlledUnit = units[0];
+		unitTransform = controlledUnit.transform;
+		HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
 	}
 
-	// Change the Controlled unit to which these controls will now apply
+	/// Change the Controlled unit to which these controls will now apply
 	public void CycleUnit() {
 		currentUnitIndex++;
 		if (currentUnitIndex > units.Count - 1)
@@ -52,7 +53,7 @@ public class UnitController : MonoBehaviour {
 		unitTransform = controlledUnit.transform;
 
 		// change UI
-		HUDManagerScript.UpdateActiveUnitText(controlledUnit.GetComponent<Unit>().Name);
+		HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
 	}
 
 	void Update () {

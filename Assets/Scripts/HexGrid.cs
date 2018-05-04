@@ -12,9 +12,10 @@ public class HexGrid : MonoBehaviour {
 	// debugging options
 	public bool AllowHexClick = true;
 	public bool ShowCoordinates = true;
+	public bool LogHexTouches = true;
 
 	private UnitController ControllerScript; 				// Reference to the controller script in order to track unit movement. Found in Start()
-	private Transform unitTransform;
+	private Unit currentUnit;
 
 	public int width = 6;
 	public int height = 6;
@@ -62,8 +63,8 @@ public class HexGrid : MonoBehaviour {
 		}
 
 		// Call color changing TouchCell stuff to change at position of the unit
-		unitTransform = ControllerScript.controlledUnit.transform;
-		TouchCell (unitTransform.position);
+		currentUnit = ControllerScript.controlledUnit.GetComponent<Unit>();
+		TouchCell (currentUnit.transform.position);
 
 	}
 
@@ -82,7 +83,7 @@ public class HexGrid : MonoBehaviour {
 		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
 
 		if (coordinates.ToString() != lastCoordinatesAsString) {	// only do if its different
-			Debug.Log("touched at " + coordinates.ToString());
+			if (LogHexTouches) Debug.Log("touched at " + coordinates.ToString());
 
 			int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
 			HexCell cell = cells[index];

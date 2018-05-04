@@ -6,7 +6,6 @@ using UnityEngine;
 /// </summary>
 public class Unit : MonoBehaviour{
 
-	// 
 	public HexCoordinates coordinates;							// Unit's location on the hexgrid
 	public HexCoordinates initialCoord;							// to be used for pathfinding
 
@@ -43,5 +42,9 @@ public class Unit : MonoBehaviour{
 	}
 
 	#endregion
+
+	void Start() {
+		coordinates = HexCoordinates.FromPosition (transform.position);
+	}
 
 }
