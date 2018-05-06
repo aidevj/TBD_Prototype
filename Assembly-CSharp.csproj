@@ -55,6 +55,8 @@
      <Compile Include="Assets\Scripts\BattleMenuControls.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
+     <Compile Include="Assets\Scripts\ErinBattleBehavior.cs" />
+     <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\HexCell.cs" />
      <Compile Include="Assets\Scripts\HexCoordinates.cs" />
      <Compile Include="Assets\Scripts\HexCoordinatesDrawer.cs" />
@@ -63,6 +65,7 @@
      <Compile Include="Assets\Scripts\HexMetrics.cs" />
      <Compile Include="Assets\Scripts\HUDManager.cs" />
      <Compile Include="Assets\Scripts\SceneManagerScript.cs" />
+     <Compile Include="Assets\Scripts\TerrainEditor.cs" />
      <Compile Include="Assets\Scripts\TerrainType.cs" />
      <Compile Include="Assets\Scripts\Unit.cs" />
      <Compile Include="Assets\Scripts\UnitController.cs" />

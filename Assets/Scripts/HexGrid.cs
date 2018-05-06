@@ -10,7 +10,6 @@ using UnityEngine.UI;
 public class HexGrid : MonoBehaviour {
 
 	// debugging options
-	public bool AllowHexClick = true;
 	public bool ShowCoordinates = true;
 	public bool LogHexTouches = true;
 
@@ -56,26 +55,14 @@ public class HexGrid : MonoBehaviour {
 	}
 
 	void Update () {
-		if (AllowHexClick) {
-			if (Input.GetMouseButton (0)) {
-				HandleInput ();
-			}
-		}
-
 		// Call color changing TouchCell stuff to change at position of the unit
 		currentUnit = ControllerScript.controlledUnit.GetComponent<Unit>();
 		TouchCell (currentUnit.transform.position);
 
 	}
+		
 
-	void HandleInput () {
-		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-		if (Physics.Raycast(inputRay, out hit)) {
-			TouchCell(hit.point);
-		}
-	}
-
+	// use for player movement!!!
 	void TouchCell (Vector3 position) {
 		position = transform.InverseTransformPoint(position);
 
@@ -83,7 +70,7 @@ public class HexGrid : MonoBehaviour {
 		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
 
 		if (coordinates.ToString() != lastCoordinatesAsString) {	// only do if its different
-			if (LogHexTouches) Debug.Log("touched at " + coordinates.ToString());
+			if (LogHexTouches) Debug.Log("Walked on: " + coordinates.ToString());
 
 			int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
 			HexCell cell = cells[index];
@@ -94,7 +81,39 @@ public class HexGrid : MonoBehaviour {
 		lastCoordinatesAsString = coordinates.ToString ();
 	}
 
-	void ResetGridColor() {}
+	public void ColorCell (Vector3 position, Color color) {
+		position = transform.InverseTransformPoint(position);
+
+		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+
+		if (LogHexTouches) Debug.Log("Touched at: " + coordinates.ToString());
+
+		int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
+		HexCell cell = cells[index];
+		cell.color = color;
+		hexMesh.Triangulate(cells);
+
+
+		lastCoordinatesAsString = coordinates.ToString ();
+	}
+
+	/// <summary>
+	/// Resets the color of the grid to white.
+	/// IMPORTANT: Do NOT use to reset grid walking paths, as this will clear structure and natural feature colors assigned on terrain.
+	/// </summary>
+	void ResetGridColorToBlank() {
+		foreach (HexCell cell in cells) {
+			cell.color = defaultColor;
+		}
+	}
+
+	/// <summary>
+	/// Restores the grid INCLUDING the terrain assigned to it.
+	/// Erases walking paths etc.
+	/// </summary>
+	void RestoreGrid() {
+		// TO DO
+	}
 
 	/// <summary>
 	/// Creates cells at the given positions with all defaults.
@@ -126,4 +145,4 @@ public class HexGrid : MonoBehaviour {
 
 }
 
-// reference: http://catlikecoding.com/unity/tutorials/hex-map/part-1/
+// reference: http://catlikecodig.com/unity/tutorials/hex-map/part-1/

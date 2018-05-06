@@ -16,7 +16,7 @@ public class UnitController : MonoBehaviour {
 	//[HideInInspector] 
 	public List<Unit> units = new List<Unit> ();		// ******Cahnge to this later to access the data from units directly
 
-	public bool controllerOn = true;					// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
+	private bool controllerOn = true;					// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
 
 	public GameObject unitHolderObj;					// gameobject called "Units" that holds all the unit in play
 	public Unit controlledUnit;							// the Unit to be controlled currently
@@ -64,9 +64,11 @@ public class UnitController : MonoBehaviour {
 	// When the terrain editor is open, disable units and mobility
 	public void DisableController() {
 		controllerOn = false;
+		Debug.Log ("Controller DISABLED");
 	}
 
 	public void EnableController() {
 		controllerOn = true;
+		Debug.Log ("Controller ENABLED");
 	}
 }
