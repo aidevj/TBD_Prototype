@@ -3,13 +3,13 @@ using UnityEngine;
 using UnityEngine.Collections;
 using System.Collections.Generic;
 
+public enum Status { Alive, Dead };
+
 /// <summary>
 /// Base Class for any Unit (ally) in the Game
 /// </summary>
 public class Unit : MonoBehaviour{
 
-	public HexCoordinates coordinates;							// Unit's location on the hexgrid
-	public HexCoordinates initialCoord;							// to be used for pathfinding
 
 	// Status Attributes
 	[SerializeField]
@@ -20,6 +20,8 @@ public class Unit : MonoBehaviour{
 
     public int currentAP;
     public int maxAP;
+
+	public Status status;
 
     // Cost to move per normal grid hex
     public int moveCost;
@@ -37,8 +39,6 @@ public class Unit : MonoBehaviour{
 	// List of available moves
 	public Ability[] movelist;
 
-	// Stack of current walked path
-	private Stack<HexCoordinates> currentPath;
 
 	// Properties
 	#region
@@ -49,7 +49,7 @@ public class Unit : MonoBehaviour{
 	#endregion
 
 	void Start() {
-		coordinates = HexCoordinates.FromPosition (transform.position);
+		//coordinates = HexCoordinates.FromPosition (transform.position);
 	}
 
 }

@@ -217,17 +217,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cdee8ac160545549b0515f5f80078d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coordinates:
-    x: 0
-    z: 0
-  initialCoord:
-    x: 0
-    z: 0
   name: Stella
   currentHP: 0
   maxHP: 0
   currentAP: 0
   maxAP: 0
+  status: 0
   moveCost: 0
   weaponType: 
   weaponAff: 
@@ -1584,17 +1579,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cdee8ac160545549b0515f5f80078d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coordinates:
-    x: 0
-    z: 0
-  initialCoord:
-    x: 0
-    z: 0
   name: Alicea
   currentHP: 0
   maxHP: 0
   currentAP: 0
   maxAP: 0
+  status: 0
   moveCost: 0
   weaponType: 
   weaponAff: 
@@ -2295,6 +2285,12 @@ MonoBehaviour:
   units: []
   unitHolderObj: {fileID: 733985515}
   controlledUnit: {fileID: 0}
+  coordinates:
+    x: 0
+    z: 0
+  initialCoord:
+    x: 0
+    z: 0
 --- !u!4 &1374363099
 Transform:
   m_ObjectHideFlags: 0
@@ -2733,6 +2729,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowCoordinates: 1
   LogHexTouches: 0
+  ControllerScript: {fileID: 1374363098}
   width: 10
   height: 10
   cellPrefab: {fileID: 114197407625290440, guid: ce4563fc5c99a0e49bb0682e9f6821d1,
@@ -3867,17 +3864,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cdee8ac160545549b0515f5f80078d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coordinates:
-    x: 0
-    z: 0
-  initialCoord:
-    x: 0
-    z: 0
   name: Andrew
   currentHP: 0
   maxHP: 0
   currentAP: 0
   maxAP: 0
+  status: 0
   moveCost: 0
   weaponType: 
   weaponAff: 

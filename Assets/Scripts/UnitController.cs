@@ -14,7 +14,7 @@ public class UnitController : MonoBehaviour {
 	private HUDManager HUDManagerScript;
 
 	//[HideInInspector] 
-	public List<Unit> units = new List<Unit> ();		// ******Cahnge to this later to access the data from units directly
+	public List<Unit> units = new List<Unit> ();
 
 	private bool controllerOn = true;					// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
 
@@ -22,7 +22,11 @@ public class UnitController : MonoBehaviour {
 	public Unit controlledUnit;							// the Unit to be controlled currently
 	private Transform unitTransform;
 	private int currentUnitIndex = 0;					// the current index in the list of units
-		
+
+	// Coordinates for pathfinding/movement
+	public HexCoordinates initialCoord;										// first position of unit since last move apply or since switched to
+	public Stack<HexCoordinates> currentPath = new Stack<HexCoordinates>();					// Stack of current walked path
+		// NOTE: THIS SHOULD NEVER INCLUDE THE INITIAL COORD (at least not for now)
 
 	// Properties
 	public Transform UnitTransform {
@@ -52,12 +56,20 @@ public class UnitController : MonoBehaviour {
 
 	/// Change the Controlled unit to which these controls will now apply
 	public void CycleUnit() {
+		// Apply latest path first if there is one
+		if (currentPath.Count != 0 )
+			ApplyMove(currentPath.Count);
+
 		currentUnitIndex++;
 		if (currentUnitIndex > units.Count - 1)
 			currentUnitIndex = 0;
 
 		controlledUnit = units[currentUnitIndex];
 		unitTransform = controlledUnit.transform;
+
+		// set initial coord
+		initialCoord = HexCoordinates.FromPosition(unitTransform.position);
+
 
 		// change all of the unit's layers to 8 before changing the current to 0
 		foreach (Unit u in units) {
@@ -84,4 +96,27 @@ public class UnitController : MonoBehaviour {
 		controllerOn = true;
 		Debug.Log ("Controller ENABLED");
 	}
+
+	// MOVEMENT---------------------------------------------------------
+
+	/// <summary>
+	/// Confirms the last path movement and consumes the appropriate amount of AP
+	/// according to the size of the currentPath stack
+	/// </summary>
+	/// <param name="numHexTravelled">Number hex travelled.</param>
+	void ApplyMove(int numHexTravelled) {
+		controlledUnit.currentAP -= numHexTravelled * controlledUnit.moveCost;
+
+		// clears current stack of moves
+		currentPath.Clear ();
+
+		// set NEW initial coord
+		// TO DO
+	}
+
+	void UndoMove(){
+		// TO DO: return unit position to the initial coordinate position (cell's transform.position)
+		//			clear currentPath stack
+	}
+		
 }

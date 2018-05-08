@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 /// <summary>
 /// Script for the HexGrid object. Handles creating and trangulating the meshes of the cells of the grid.
@@ -13,7 +14,7 @@ public class HexGrid : MonoBehaviour {
 	public bool ShowCoordinates = true;
 	public bool LogHexTouches = true;
 
-	private UnitController ControllerScript; 				// Reference to the controller script in order to track unit movement. Found in Start()
+	public UnitController ControllerScript; 				// Reference to the controller script in order to track unit movement. Found in Start()
 	private Unit currentUnit;
 
 	public int width = 6;
@@ -54,14 +55,12 @@ public class HexGrid : MonoBehaviour {
 		// after the grid has awoken
 		hexMesh.Triangulate (cells);
 
-		// get reference to ControllerManager's UnitController script
-		ControllerScript = GameObject.Find("ControllerManager").GetComponent<UnitController>();
-
+		// Get current unti from controler scirpt
+		currentUnit = ControllerScript.controlledUnit.GetComponent<Unit>();
 	}
 
 	void Update () {
-		// Call color changing TouchCell stuff to change at position of the unit
-		currentUnit = ControllerScript.controlledUnit.GetComponent<Unit>();
+		// get position of unit
 		TouchCell (currentUnit.transform.position);
 
 	}
@@ -84,6 +83,10 @@ public class HexGrid : MonoBehaviour {
 			HexCell cell = cells[index];
 			cell.color = activeColor;
 			hexMesh.Triangulate(cells);
+
+			// Push this new coord to the controller's current path stack
+			ControllerScript.currentPath.Push(coordinates);
+			//Debug.Log (ControllerScript.currentPath.Peek());
 		}
 
 		lastCoordinatesAsString = coordinates.ToString ();
