@@ -7,22 +7,44 @@ public enum GameState {
 	Paused
 }
 
+/// <summary>
+/// Handles and oversees processes of the Grid Scene and the battle gameplay that takes place within.
+/// Handles opening and closing menus in the screen such as the Terrain Editor, and sets the Game State accordingly.
+/// </summary>
 public class GameManager : MonoBehaviour {
 
-	// Refernces to other manager scripts, drag in inspector
-	public GameObject ControllerManagerObject;
-	public GameObject UICanvasObject;
-	private UnitController UnitControllerManagerScript;
-	private HUDManager HUDManagerScript;
+	// Refernces to other manager scripts (drag in inspector)
+	public UnitController UnitControllerManagerScript;
+	public HUDManager HUDManagerScript;
+	public TerrainEditor TerrainEditorScript;
 
 	// Gameplay properties
 	public GameState currentGameState;
 	public GameState lastGameState;
 
+	public bool terrainEditorOpen;
+
 
 	void Start() {
-		UnitControllerManagerScript = ControllerManagerObject.GetComponent<UnitController> ();
-		HUDManagerScript = UICanvasObject.GetComponent<HUDManager> ();
+		// Terrain Editor should be inactive from the start
+		TerrainEditorScript.gameObject.SetActive (false);
+		terrainEditorOpen = false;
+
+		// ignore collisions between layer 0 and 8
+		Physics.IgnoreLayerCollision(0,8);
+	}
+
+	void Update() {
+		// toggle terrain editor menu
+		if (Input.GetKeyDown (KeyCode.T)) {
+			
+			if (terrainEditorOpen == true) {
+				CloseTerrainEditor ();
+			}
+			else {
+				OpenTerrainEditor ();
+			}
+		}
 	}
 
 
@@ -32,17 +54,21 @@ public class GameManager : MonoBehaviour {
 	/// Opens the terrain editor menu and pauses the gameplay.
 	/// </summary>
 	public void OpenTerrainEditor() {
-		SceneManager.LoadScene (3, LoadSceneMode.Additive);
-		UnitControllerManagerScript.DisableController ();
+		TerrainEditorScript.gameObject.SetActive (true);
+		terrainEditorOpen = true;
+
+		UnitControllerManagerScript.ControllerOn = false;
 		lastGameState = currentGameState;
 		currentGameState = GameState.Paused;
 
 	}
 
 	public void CloseTerrainEditor() {
-		//SceneManager.UnloadSceneAsync (3);
-		//UnitControllerManagerScript.EnableController ();
-		//currentGameState = lastGameState;
+		TerrainEditorScript.gameObject.SetActive (false);
+		terrainEditorOpen = false;
+
+		UnitControllerManagerScript.ControllerOn = true;
+		currentGameState = lastGameState;
 
 	}
 

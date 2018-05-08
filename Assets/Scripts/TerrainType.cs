@@ -1,7 +1,10 @@
 ﻿public enum TerrainType {
 	Normal,
+	RoughTerrain,
 	Trench,
 	Poison,
-	Smog,
+	Swamp,
+	HeatWave,
+	Mist,
 	Impassible
 }

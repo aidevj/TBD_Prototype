@@ -9,4 +9,5 @@ public class HexCell : MonoBehaviour {
 
 	// Status Attributes
 	public TerrainType terrainType;
+	public bool isOccupied;	// is there a unit already on this hex
 }

@@ -27,8 +27,13 @@ public class HexGrid : MonoBehaviour {
 
 	HexCell[] cells;										// Array of hexCells in the Grid
 
+	// hex type stuff
 	public Color defaultColor = Color.white;
 	public Color activeColor = Color.cyan; 					// "touched"
+	public GameObject wallPrefab;
+	public GameObject mistFXPrefab;
+	public GameObject poisonFXPrefab;
+
 
 	private string lastCoordinatesAsString = "";
 
@@ -62,7 +67,10 @@ public class HexGrid : MonoBehaviour {
 	}
 		
 
-	// use for player movement!!!
+	/// <summary>
+	/// USED FOR PLAYER MOVEMENT
+	/// </summary>
+	/// <param name="position">Position.</param>
 	void TouchCell (Vector3 position) {
 		position = transform.InverseTransformPoint(position);
 
@@ -81,7 +89,15 @@ public class HexGrid : MonoBehaviour {
 		lastCoordinatesAsString = coordinates.ToString ();
 	}
 
-	public void ColorCell (Vector3 position, Color color) {
+	/// <summary>
+	/// Modify's a cell from its position.
+	/// Changes the color and terrain type.
+	/// To be called from TerrainEditor.cs
+	/// </summary>
+	/// <param name="position">Position.</param>
+	/// <param name="color">Color.</param>
+	/// <param name="type">Type.</param>
+	public void EditCell (Vector3 position, Color color, TerrainType type) {
 		position = transform.InverseTransformPoint(position);
 
 		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
@@ -90,11 +106,20 @@ public class HexGrid : MonoBehaviour {
 
 		int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
 		HexCell cell = cells[index];
+
+		// if the same, dont do anything
+		if (cell.terrainType == type) return;
+
+		// change cell properties
 		cell.color = color;
+		cell.terrainType = type;
+
+		if (type == TerrainType.Impassible) {
+			GameObject newWall = (GameObject)Instantiate (wallPrefab, cell.transform.position, Quaternion.identity);
+			newWall.transform.parent = cell.gameObject.transform;
+		}
+
 		hexMesh.Triangulate(cells);
-
-
-		lastCoordinatesAsString = coordinates.ToString ();
 	}
 
 	/// <summary>
@@ -133,7 +158,11 @@ public class HexGrid : MonoBehaviour {
 		cell.transform.SetParent(transform, false);
 		cell.transform.localPosition = position;
 		cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
+
+		// default attributes of cell
 		cell.color = defaultColor;
+		cell.terrainType = TerrainType.Normal;
+		cell.isOccupied = false;
 
 		// instantiate the labels and show cell coordinates
 		Text label = Instantiate<Text>(cellLabelPrefab);

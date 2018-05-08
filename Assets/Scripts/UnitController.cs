@@ -29,7 +29,13 @@ public class UnitController : MonoBehaviour {
 		get { return UnitTransform; }
 	}
 
+	public bool ControllerOn {
+		set { controllerOn = value; }
+		get { return controllerOn; }
+	}
+
 	void Start () {
+		// Get reference to HUD Manager script
 		HUDManagerScript = GameObject.Find ("UICanvas").GetComponent<HUDManager> ();
 
 		// Populate the Units list
@@ -39,6 +45,7 @@ public class UnitController : MonoBehaviour {
 
 		// Default the first in the list to the current controlled unit
 		controlledUnit = units[0];
+		controlledUnit.gameObject.layer = 0;		// CURRENT CONTROLLED UNIT MUST BE ON LAYER 0, OTHERS MUST BE ON 8
 		unitTransform = controlledUnit.transform;
 		HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
 	}
@@ -51,6 +58,12 @@ public class UnitController : MonoBehaviour {
 
 		controlledUnit = units[currentUnitIndex];
 		unitTransform = controlledUnit.transform;
+
+		// change all of the unit's layers to 8 before changing the current to 0
+		foreach (Unit u in units) {
+			u.gameObject.layer = 8;
+		}
+		controlledUnit.gameObject.layer = 0;
 
 		// change UI
 		HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);

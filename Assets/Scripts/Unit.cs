@@ -1,5 +1,7 @@
 ﻿// Aiden
 using UnityEngine;
+using UnityEngine.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// Base Class for any Unit (ally) in the Game
@@ -34,6 +36,9 @@ public class Unit : MonoBehaviour{
 
 	// List of available moves
 	public Ability[] movelist;
+
+	// Stack of current walked path
+	private Stack<HexCoordinates> currentPath;
 
 	// Properties
 	#region

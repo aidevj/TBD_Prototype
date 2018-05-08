@@ -1,13 +1,16 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\TerrainEditor.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Unit.cs">
     <Files>
-      <File FileName="Assets\Scripts\UnitController.cs" Line="51" Column="3" />
-      <File FileName="Assets\Scripts\HexGrid.cs" Line="93" Column="22" />
-      <File FileName="Assets\Scripts\HUDManager.cs" Line="17" Column="46" />
-      <File FileName="Assets\Scripts\Unit.cs" Line="44" Column="12" />
-      <File FileName="Assets\Scripts\GameManager.cs" Line="38" Column="39" />
-      <File FileName="Assets\Scripts\TerrainEditor.cs" Line="20" Column="34" />
+      <File FileName="Assets\Scripts\UnitController.cs" Line="31" Column="2" />
+      <File FileName="Assets\Scripts\HUDManager.cs" Line="2" Column="1" />
+      <File FileName="Assets\Scripts\GameManager.cs" Line="26" Column="2" />
+      <File FileName="Assets\Scripts\TerrainEditor.cs" Line="12" Column="76" />
+      <File FileName="Assets\Scripts\HexCell.cs" Line="11" Column="33" />
+      <File FileName="Assets\Scripts\TerrainType.cs" Line="7" Column="10" />
+      <File FileName="Assets\Scripts\Unit.cs" Line="9" Column="35" />
+      <File FileName="Assets\Scripts\HexCoordinates.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\HexGrid.cs" Line="119" Column="57" NotebookId="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
