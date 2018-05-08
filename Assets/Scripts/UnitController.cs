@@ -15,16 +15,18 @@ public class UnitController : MonoBehaviour {
 
 	//[HideInInspector] 
 	public List<Unit> units = new List<Unit> ();
+	public List<Enemy> enemies = new List<Enemy> ();
 
 	private bool controllerOn = true;					// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
 
 	public GameObject unitHolderObj;					// gameobject called "Units" that holds all the unit in play
-	public Unit controlledUnit;							// the Unit to be controlled currently
+	public GameObject enemyHolderObj;
+	public Unit controlledUnit;							// the Unit controlled currently
 	private Transform unitTransform;
-	private int currentUnitIndex = 0;					// the current index in the list of units
+	private int currentUnitIndex = 0;	
 
 	// Coordinates for pathfinding/movement
-	public HexCoordinates initialCoord;										// first position of unit since last move apply or since switched to
+	public HexCoordinates initialCoord;														// first position of unit since last move apply or since switched to
 	public Stack<HexCoordinates> currentPath = new Stack<HexCoordinates>();					// Stack of current walked path
 		// NOTE: THIS SHOULD NEVER INCLUDE THE INITIAL COORD (at least not for now)
 
@@ -39,12 +41,16 @@ public class UnitController : MonoBehaviour {
 	}
 
 	void Start () {
-		// Get reference to HUD Manager script
 		HUDManagerScript = GameObject.Find ("UICanvas").GetComponent<HUDManager> ();
 
 		// Populate the Units list
 		foreach (Transform child in unitHolderObj.transform) {
 			units.Add (child.gameObject.GetComponent<Unit>());
+		}
+
+		// Populate Enemies list
+		foreach (Transform child in enemyHolderObj.transform) {
+			enemies.Add (child.gameObject.GetComponent<Enemy> ());
 		}
 
 		// Default the first in the list to the current controlled unit
@@ -61,17 +67,17 @@ public class UnitController : MonoBehaviour {
 			ApplyMove(currentPath.Count);
 
 		currentUnitIndex++;
-		if (currentUnitIndex > units.Count - 1)
+		if (currentUnitIndex > units.Count - 1)	// loop through list
 			currentUnitIndex = 0;
 
 		controlledUnit = units[currentUnitIndex];
 		unitTransform = controlledUnit.transform;
 
 		// set initial coord
-		initialCoord = HexCoordinates.FromPosition(unitTransform.position);
+		initialCoord = GetCurrentCoordinate();
 
 
-		// change all of the unit's layers to 8 before changing the current to 0
+		// Change all of the unit's layers to 8 before changing the current to 0
 		foreach (Unit u in units) {
 			u.gameObject.layer = 8;
 		}
@@ -79,11 +85,15 @@ public class UnitController : MonoBehaviour {
 
 		// change UI
 		HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
+		// CHANGE CORRESPONDING UNITS ACTIONS LIST HERE
 	}
 
 	void Update () {
+		// Movement
 		if (controllerOn)
 			unitTransform.Translate (Input.GetAxis ("Horizontal_Player") * speed, Input.GetAxis ("Vertical_Player"), 0);
+
+		// TO DO: check adjacency with other units
 	}
 
 	// When the terrain editor is open, disable units and mobility
@@ -104,19 +114,52 @@ public class UnitController : MonoBehaviour {
 	/// according to the size of the currentPath stack
 	/// </summary>
 	/// <param name="numHexTravelled">Number hex travelled.</param>
-	void ApplyMove(int numHexTravelled) {
-		controlledUnit.currentAP -= numHexTravelled * controlledUnit.moveCost;
+	void ApplyMove(int numHexTraveled) {
+		controlledUnit.currentAP -= numHexTraveled * controlledUnit.moveCost;
 
 		// clears current stack of moves
 		currentPath.Clear ();
 
 		// set NEW initial coord
-		// TO DO
+		initialCoord = GetCurrentCoordinate();
 	}
 
 	void UndoMove(){
 		// TO DO: return unit position to the initial coordinate position (cell's transform.position)
 		//			clear currentPath stack
 	}
+
+	/// <summary>
+	/// Checkes if there are units adjacent to the currently controlled unit.
+	/// ONLY APPLIES TO CHECKING FOR ENEMIES RIGHT NOW.
+	/// </summary>
+	/// <returns><c>true</c> units are adjacent <c>false</c> no adjacent units.</returns>
+	bool AreThereAdjacentUnits() {
+		// loop through hexes surrounding current location
+		// chekc each
+		List<HexCoordinates> surroundingHexes = new List<HexCoordinates>();
+		HexCoordinates current = GetCurrentCoordinate ();
+		surroundingHexes.Add (new HexCoordinates(current.X + 1, current.Z));
+		surroundingHexes.Add (new HexCoordinates(current.X, current.Z + 1));
+		surroundingHexes.Add (new HexCoordinates(current.X - 1, current.Z));
+		surroundingHexes.Add (new HexCoordinates(current.X, current.Z - 1));
+		surroundingHexes.Add (new HexCoordinates(current.X - 1, current.Z + 1));
+		surroundingHexes.Add (new HexCoordinates(current.X + 1, current.Z - 1));
+
+
+		// if there are enemies, return true
+
+		//otherwise return false
+		return false;
+	}
+
+	/// <summary>
+	/// Helper function to get the current HexCoord
+	/// </summary>
+	/// <returns>The current location.</returns>
+	HexCoordinates GetCurrentCoordinate() {
+		return HexCoordinates.FromPosition(unitTransform.position);
+	}
+
 		
 }
