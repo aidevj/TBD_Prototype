@@ -32,6 +32,8 @@ public class UnitController : MonoBehaviour {
 	public Stack<HexCoordinates> currentPath = new Stack<HexCoordinates>();					// Stack of current walked path
 		// NOTE: THIS SHOULD NEVER INCLUDE THE INITIAL COORD (at least not for now)
 
+	public Unit target;					// target of action
+
 	// Properties
 	public Transform UnitTransform {
 		get { return UnitTransform; }
@@ -56,7 +58,6 @@ public class UnitController : MonoBehaviour {
 		}
 
 
-
 		// Default the first in the list to the current controlled unit
 		controlledUnit = units[0];
 		controlledUnit.gameObject.layer = 0;		// CURRENT CONTROLLED UNIT MUST BE ON LAYER 0, OTHERS MUST BE ON 8
@@ -64,20 +65,31 @@ public class UnitController : MonoBehaviour {
 		HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
 	}
 
-	/// Change the Controlled unit to which these controls will now apply
+	/// Cycles through controllable units (skips over dead units)
 	public void CycleUnit() {
 		// Apply latest path first if there is one
 		if (currentPath.Count != 0 )
-			ApplyMove(currentPath.Count);
+			ApplyMove();
 
 		// set the coordinate of the unit from which you are switching to occupied
 		hexGrid.OccupyCell(HexCoordinates.GetIndexOfCoordinate(GetCurrentCoordinate(), hexGrid.width));
 
-		currentUnitIndex++;
+		// Now increment to next unit in list
+
+		// Skip if dead
+		do {
+			currentUnitIndex++;
+			if (currentUnitIndex > units.Count - 1)	// loop through list
+				currentUnitIndex = 0;
+		} while (units [currentUnitIndex].status == Status.Dead);
+
+
 		if (currentUnitIndex > units.Count - 1)	// loop through list
 			currentUnitIndex = 0;
 
 		controlledUnit = units[currentUnitIndex];
+
+		
 		unitTransform = controlledUnit.transform;
 
 		// set initial coord
@@ -90,8 +102,9 @@ public class UnitController : MonoBehaviour {
 		}
 		controlledUnit.gameObject.layer = 0;
 
-		// change UI
+		// Update UI with Current Unit data
 		HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
+		HUDManagerScript.UpdateAPBar();
 		// CHANGE CORRESPONDING UNITS ACTIONS LIST HERE
 	}
 
@@ -100,6 +113,11 @@ public class UnitController : MonoBehaviour {
 		if (controllerOn)
 			unitTransform.Translate (Input.GetAxis ("Horizontal_Player") * speed, Input.GetAxis ("Vertical_Player"), 0);
 
+		// if character runs out of AP, disable controller
+		if (controlledUnit.currentAP <= 0)
+			controllerOn = false;
+		else
+			controllerOn = true;
 
 	}
 
@@ -117,23 +135,24 @@ public class UnitController : MonoBehaviour {
 	// MOVEMENT---------------------------------------------------------
 
 	/// <summary>
-	/// Confirms the last path movement and consumes the appropriate amount of AP
+	/// Confirms the last path movement and consumes the appropriate amount of AP <-- this is handled in TouchCell() of HexGrid.cs
 	/// according to the size of the currentPath stack
 	/// </summary>
-	/// <param name="numHexTravelled">Number hex travelled.</param>
-	void ApplyMove(int numHexTraveled) {
-		controlledUnit.currentAP -= numHexTraveled * controlledUnit.moveCost;
-
+	public void ApplyMove() {
 		// clears current stack of moves
 		currentPath.Clear ();
 
 		// set NEW initial coord
 		initialCoord = GetCurrentCoordinate();
+
+		// TO DO: clear the grid colors for walking (USE RESTORE GRID LATER)
+		hexGrid.ResetGridColorToBlank();
 	}
 
-	void UndoMove(){
+	public void UndoMove(){
 		// TO DO: return unit position to the initial coordinate position (cell's transform.position)
 		//			clear currentPath stack
+		currentPath.Clear ();
 	}
 
 	/// <summary>

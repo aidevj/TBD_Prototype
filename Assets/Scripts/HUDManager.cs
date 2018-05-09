@@ -21,6 +21,10 @@ public class HUDManager : MonoBehaviour {
 	Text HPText;
 	Text APText;
 
+	RectTransform APBarTransform;
+	float APBarMaxHeight;
+
+
 	void Start () {
 		UnitControllerScript = GameObject.Find ("ControllerManager").GetComponent<UnitController> ();
 
@@ -29,12 +33,23 @@ public class HUDManager : MonoBehaviour {
 		HPText = HPTextObj.GetComponent<Text> ();
 		APText = APTextObj.GetComponent<Text> ();
 
+		// Get transforms of bars
+		APBarTransform = APBar.GetComponent<RectTransform> ();
+		APBarMaxHeight = APBarTransform.sizeDelta.y;
 	}
 
 	void Update () {
-		// Attach currentUnit HP and AP to 
-
+		
 	}
+
+	public void UpdateAPBar() {
+		// Change height of bars accordingly
+		APBarTransform.sizeDelta = new Vector2(
+			APBarTransform.sizeDelta.x, // NEVER CHANGE
+			APBarMaxHeight * ((float)UnitControllerScript.controlledUnit.currentAP / (float)UnitControllerScript.controlledUnit.maxAP)
+		);
+	}
+
 
 	public void UpdateActiveUnitText(string newText) {
 		activeUnitText.text = newText;

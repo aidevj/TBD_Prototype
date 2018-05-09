@@ -15,6 +15,8 @@ public class HexGrid : MonoBehaviour {
 	public bool LogHexTouches = true;
 
 	public UnitController ControllerScript; 				// Reference to the controller script in order to track unit movement. Found in Start()
+	public HUDManager HUDScript;
+
 	private Unit currentUnit;
 
 	public List<Unit> units;								// references to the units and enemies in UnitController
@@ -86,9 +88,9 @@ public class HexGrid : MonoBehaviour {
 		
 
 	/// <summary>
-	/// USED FOR PLAYER MOVEMENT
+	/// Used for unit movement
 	/// </summary>
-	/// <param name="position">Position.</param>
+	/// <param name="position">Position of unit.</param>
 	void TouchCell (Vector3 position) {
 		position = transform.InverseTransformPoint(position);
 
@@ -96,9 +98,7 @@ public class HexGrid : MonoBehaviour {
 		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
 
 
-		#region Essentialy the "On Cell Change" for the units movement
-		// everything that should be done only when the unit moves to a different hex
-		// is done here
+		#region Checks upon Cell Change
 		if (coordinates.ToString() != lastCoordinatesAsString) {	
 			if (LogHexTouches) Debug.Log("Walked on: " + coordinates.ToString());
 
@@ -110,10 +110,16 @@ public class HexGrid : MonoBehaviour {
 			OccupyCell(index);
 
 			// unoccupy the last walked cell (top of stack) before pusnhing the new one (only if there is a last)
-			if (ControllerScript.currentPath.Count > 0)
+			if (ControllerScript.currentPath.Count > 0) {
 				UnoccupyCell(HexCoordinates.GetIndexOfCoordinate(ControllerScript.currentPath.Peek(), width));
+				// Subtract AP per move (done here so it doesnt subtract until after moved at least once)
+				ControllerScript.controlledUnit.currentAP -= ControllerScript.controlledUnit.moveCost;
+				HUDScript.UpdateAPBar();
+			}
 			// Push this new coord to the controller's current path stack
 			ControllerScript.currentPath.Push(coordinates);
+
+
 		}
 		#endregion
 
@@ -139,7 +145,7 @@ public class HexGrid : MonoBehaviour {
 		HexCell cell = cells[index];
 
 		// if the same, dont do anything
-		if (cell.terrainType == type) return;
+		//if (cell.terrainType == type) return; // dont do this for now since walk path colors can override the terrain type color
 
 		// change cell properties
 		cell.color = color;
@@ -157,7 +163,7 @@ public class HexGrid : MonoBehaviour {
 	/// Resets the color of the grid to white.
 	/// IMPORTANT: Do NOT use to reset grid walking paths, as this will clear structure and natural feature colors assigned on terrain.
 	/// </summary>
-	void ResetGridColorToBlank() {
+	public void ResetGridColorToBlank() {
 		foreach (HexCell cell in cells) {
 			cell.color = defaultColor;
 		}
