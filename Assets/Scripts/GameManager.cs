@@ -23,12 +23,14 @@ public class GameManager : MonoBehaviour {
 	public GameState lastGameState;
 
 	public bool terrainEditorOpen;
+	public bool battleMenuOpen;
 
 
 	void Start() {
 		// Terrain Editor should be inactive from the start
 		TerrainEditorScript.gameObject.SetActive (false);
 		terrainEditorOpen = false;
+		battleMenuOpen = false;
 
 		// ignore collisions between layer 0 and 8
 		Physics.IgnoreLayerCollision(0,8);
@@ -45,6 +47,17 @@ public class GameManager : MonoBehaviour {
 				OpenTerrainEditor ();
 			}
 		}
+
+
+		// Check for adjacency to enable the battle menu
+		if (UnitControllerManagerScript.AreThereAdjacentUnits () == true && battleMenuOpen == false) {
+			OpenBattleMenu ();
+			Debug.Log("Adjacent units!");
+		} 
+		else if (UnitControllerManagerScript.AreThereAdjacentUnits () == false && battleMenuOpen == true) {
+			CloseBattleMenu ();
+			Debug.Log("No adjacent units.");
+		}
 	}
 
 
@@ -53,7 +66,7 @@ public class GameManager : MonoBehaviour {
 	/// <summary>
 	/// Opens the terrain editor menu and pauses the gameplay.
 	/// </summary>
-	public void OpenTerrainEditor() {
+	void OpenTerrainEditor() {
 		TerrainEditorScript.gameObject.SetActive (true);
 		terrainEditorOpen = true;
 
@@ -63,13 +76,23 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	public void CloseTerrainEditor() {
+	void CloseTerrainEditor() {
 		TerrainEditorScript.gameObject.SetActive (false);
 		terrainEditorOpen = false;
 
 		UnitControllerManagerScript.ControllerOn = true;
 		currentGameState = lastGameState;
 
+	}
+
+	void OpenBattleMenu() {
+		// TO DO: make battle menu active
+		battleMenuOpen = true;
+	}
+
+	void CloseBattleMenu() {
+		// TO DO: make battle menu active
+		battleMenuOpen = false;
 	}
 
 

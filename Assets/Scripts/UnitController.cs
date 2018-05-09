@@ -13,6 +13,8 @@ public class UnitController : MonoBehaviour {
 
 	private HUDManager HUDManagerScript;
 
+	public HexGrid hexGrid;
+
 	//[HideInInspector] 
 	public List<Unit> units = new List<Unit> ();
 	public List<Enemy> enemies = new List<Enemy> ();
@@ -53,6 +55,8 @@ public class UnitController : MonoBehaviour {
 			enemies.Add (child.gameObject.GetComponent<Enemy> ());
 		}
 
+
+
 		// Default the first in the list to the current controlled unit
 		controlledUnit = units[0];
 		controlledUnit.gameObject.layer = 0;		// CURRENT CONTROLLED UNIT MUST BE ON LAYER 0, OTHERS MUST BE ON 8
@@ -65,6 +69,9 @@ public class UnitController : MonoBehaviour {
 		// Apply latest path first if there is one
 		if (currentPath.Count != 0 )
 			ApplyMove(currentPath.Count);
+
+		// set the coordinate of the unit from which you are switching to occupied
+		hexGrid.OccupyCell(HexCoordinates.GetIndexOfCoordinate(GetCurrentCoordinate(), hexGrid.width));
 
 		currentUnitIndex++;
 		if (currentUnitIndex > units.Count - 1)	// loop through list
@@ -93,7 +100,7 @@ public class UnitController : MonoBehaviour {
 		if (controllerOn)
 			unitTransform.Translate (Input.GetAxis ("Horizontal_Player") * speed, Input.GetAxis ("Vertical_Player"), 0);
 
-		// TO DO: check adjacency with other units
+
 	}
 
 	// When the terrain editor is open, disable units and mobility
@@ -134,9 +141,8 @@ public class UnitController : MonoBehaviour {
 	/// ONLY APPLIES TO CHECKING FOR ENEMIES RIGHT NOW.
 	/// </summary>
 	/// <returns><c>true</c> units are adjacent <c>false</c> no adjacent units.</returns>
-	bool AreThereAdjacentUnits() {
-		// loop through hexes surrounding current location
-		// chekc each
+	public bool AreThereAdjacentUnits() {
+		// store surrounding hexes in a list
 		List<HexCoordinates> surroundingHexes = new List<HexCoordinates>();
 		HexCoordinates current = GetCurrentCoordinate ();
 		surroundingHexes.Add (new HexCoordinates(current.X + 1, current.Z));
@@ -146,9 +152,17 @@ public class UnitController : MonoBehaviour {
 		surroundingHexes.Add (new HexCoordinates(current.X - 1, current.Z + 1));
 		surroundingHexes.Add (new HexCoordinates(current.X + 1, current.Z - 1));
 
-
 		// if there are enemies, return true
+		foreach (HexCoordinates h in surroundingHexes) {
+			// if any adjacent cells are occupied, return true
+			int index = HexCoordinates.GetIndexOfCoordinate(h, hexGrid.width);
+			if (index >= 0) {	// needed to avoid index out of range errors for edge hexes
+				if (hexGrid.Cells [index].isOccupied == true) {
+					return true;
+				}
+			}
 
+		}
 		//otherwise return false
 		return false;
 	}

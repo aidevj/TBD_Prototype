@@ -50,6 +50,7 @@ public class Unit : MonoBehaviour{
 
 	void Start() {
 		currentCoord = HexCoordinates.FromPosition (transform.position);
+
 	}
 
 }

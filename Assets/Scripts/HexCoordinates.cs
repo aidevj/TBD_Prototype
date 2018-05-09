@@ -73,6 +73,11 @@ public struct HexCoordinates {
 		return new HexCoordinates(iX, iZ);
 	}
 
+	// get the index of the cell in it's list according to its coordinates 
+	public static int GetIndexOfCoordinate(HexCoordinates h, int gridWidth){
+		return h.X + h.Z * gridWidth + h.Z / 2;
+	}
+
 	// override toStrings so it doesn't just reutrn the struct's type name
 	public override string ToString () {
 		return "(" + X.ToString() + ", " + Y.ToString() + ", " + Z.ToString() + ")";

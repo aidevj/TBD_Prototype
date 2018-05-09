@@ -17,6 +17,9 @@ public class HexGrid : MonoBehaviour {
 	public UnitController ControllerScript; 				// Reference to the controller script in order to track unit movement. Found in Start()
 	private Unit currentUnit;
 
+	public List<Unit> units;								// references to the units and enemies in UnitController
+	public List<Enemy> enemies;
+
 	public int width = 6;
 	public int height = 6;
 
@@ -35,8 +38,13 @@ public class HexGrid : MonoBehaviour {
 	public GameObject mistFXPrefab;
 	public GameObject poisonFXPrefab;
 
-
+	private HexCoordinates lastCoords;
 	private string lastCoordinatesAsString = "";
+
+	// Read-only cells
+	public HexCell[] Cells {
+		get { return cells; }
+	}
 
 	void Awake () {
 		cells = new HexCell[height * width];
@@ -55,13 +63,23 @@ public class HexGrid : MonoBehaviour {
 		// after the grid has awoken
 		hexMesh.Triangulate (cells);
 
-		// Get current unti from controler scirpt
+		units = ControllerScript.units;
+		enemies = ControllerScript.enemies;
+
+		foreach (Unit u in units) {
+			OccupyCell (HexCoordinates.GetIndexOfCoordinate (u.currentCoord, width));
+		}
+		foreach (Enemy e in enemies) {
+			OccupyCell (HexCoordinates.GetIndexOfCoordinate (e.currentCoord, width));
+		}
 
 	}
 
 	void Update () {
+		// Must get current unit in update to update when current unit is changes
 		currentUnit = ControllerScript.controlledUnit.GetComponent<Unit>();
-		// get position of unit
+
+		// get position of unit for movement
 		TouchCell (currentUnit.transform.position);
 
 	}
@@ -77,18 +95,27 @@ public class HexGrid : MonoBehaviour {
 		// to know where we are touching, we have to convert the touch position to hex coordinates
 		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
 
-		if (coordinates.ToString() != lastCoordinatesAsString) {	// only do if its different
+
+		#region Essentialy the "On Cell Change" for the units movement
+		// everything that should be done only when the unit moves to a different hex
+		// is done here
+		if (coordinates.ToString() != lastCoordinatesAsString) {	
 			if (LogHexTouches) Debug.Log("Walked on: " + coordinates.ToString());
 
-			int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
+			int index = HexCoordinates.GetIndexOfCoordinate(coordinates, width);
 			HexCell cell = cells[index];
 			cell.color = activeColor;
 			hexMesh.Triangulate(cells);
 
+			OccupyCell(index);
+
+			// unoccupy the last walked cell (top of stack) before pusnhing the new one (only if there is a last)
+			if (ControllerScript.currentPath.Count > 0)
+				UnoccupyCell(HexCoordinates.GetIndexOfCoordinate(ControllerScript.currentPath.Peek(), width));
 			// Push this new coord to the controller's current path stack
 			ControllerScript.currentPath.Push(coordinates);
-			//Debug.Log (ControllerScript.currentPath.Peek());
 		}
+		#endregion
 
 		lastCoordinatesAsString = coordinates.ToString ();
 	}
@@ -175,6 +202,22 @@ public class HexGrid : MonoBehaviour {
 			new Vector2(position.x, position.z);
 		label.text = cell.coordinates.ToStringOnSeparateLines();
 	}
+
+
+
+	/// <summary>
+	/// Makes the isOccupied attribute of the specified cell true.
+	/// </summary>
+	/// <param name="index">Index.</param>
+	public void OccupyCell(int index) {
+		cells [index].isOccupied = true;
+	}
+
+	public void UnoccupyCell(int index) {
+		cells [index].isOccupied = false;
+	}
+
+
 
 }
 
