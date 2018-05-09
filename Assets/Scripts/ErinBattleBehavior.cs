@@ -44,6 +44,9 @@ public class ErinBattleBehavior : MonoBehaviour {
     public Image PlayerBackground;
     public Image EnemyBackground;
 
+    public GameObject PlayerAttackUI;
+    public GameObject EnemyAttackUI;
+
     public Text PMove1;
     public Text PMove2;
     public Text PMove3;
@@ -95,6 +98,9 @@ public class ErinBattleBehavior : MonoBehaviour {
             PMove2.text = ActiveUnit.movelist[1].name + ": ";
             PMove3.text = ActiveUnit.movelist[2].name + ": ";
             PMove4.text = ActiveUnit.movelist[3].name + ": ";
+
+            PlayerAttackUI.SetActive(true);
+            EnemyAttackUI.SetActive(false);
         }
         if(!isPlayerTurn)
         {
@@ -102,6 +108,9 @@ public class ErinBattleBehavior : MonoBehaviour {
             EMove2.text = ActiveUnit.movelist[1].name + ": ";
             EMove3.text = ActiveUnit.movelist[2].name + ": ";
             EMove4.text = ActiveUnit.movelist[3].name + ": ";
+
+            PlayerAttackUI.SetActive(false);
+            EnemyAttackUI.SetActive(true);
         }
         
     }
