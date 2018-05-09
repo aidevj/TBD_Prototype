@@ -57,11 +57,22 @@ public class ErinBattleBehavior : MonoBehaviour {
     public Text EMove3;
     public Text EMove4;
 
+    public Canvas EndMenu;
+    public Text WinText;
+    public Text LoseText;
+
+    int totalUHP;
+    int totalEHP; //these are used to track if an entire team has died yet
+
     // Use this for initialization
     void Start () {
         isPlayerTurn = true;
         PlayerBackground.enabled = true;
         EnemyBackground.enabled = false;
+        EndMenu.enabled = false;
+        totalUHP = 0;
+        totalEHP = 0; 
+
     }
 	
 	// Update is called once per frame
@@ -112,7 +123,30 @@ public class ErinBattleBehavior : MonoBehaviour {
             PlayerAttackUI.SetActive(false);
             EnemyAttackUI.SetActive(true);
         }
-        
+
+        //check if player team has died
+        totalUHP = 0;
+        foreach (Unit u in players)
+        {
+            totalUHP += u.currentHP;
+        }
+        if (totalUHP <= 0)
+        {
+            EndGameWin(false);
+        }
+
+
+        //check if enemy team has died
+        totalEHP = 0;
+        foreach (Enemy e in enemies)
+        {
+            totalEHP += e.currentHP;
+        }
+        if(totalEHP <= 0)
+        {
+            EndGameWin(true);
+        }
+
     }
 
     public void SwitchUnit()
@@ -171,6 +205,24 @@ public class ErinBattleBehavior : MonoBehaviour {
             ActiveUnit.currentAP -= ActiveUnit.movelist[moveNum].cost;
         }
         
+    }
+
+    public void EndGameWin(bool playerWin)
+    {
+        if(playerWin)
+        {
+            EndMenu.enabled = true;
+            WinText.enabled = true;
+            LoseText.enabled = false;
+            
+        }
+        if(!playerWin)
+        {
+            EndMenu.enabled = true;
+            WinText.enabled = false;
+            LoseText.enabled = true;
+            
+        }
     }
 
 
