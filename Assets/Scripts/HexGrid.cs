@@ -56,10 +56,11 @@ public class HexGrid : MonoBehaviour {
 		hexMesh.Triangulate (cells);
 
 		// Get current unti from controler scirpt
-		currentUnit = ControllerScript.controlledUnit.GetComponent<Unit>();
+
 	}
 
 	void Update () {
+		currentUnit = ControllerScript.controlledUnit.GetComponent<Unit>();
 		// get position of unit
 		TouchCell (currentUnit.transform.position);
 

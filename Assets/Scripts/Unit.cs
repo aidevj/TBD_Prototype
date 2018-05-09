@@ -10,9 +10,9 @@ public enum Status { Alive, Dead };
 /// </summary>
 public class Unit : MonoBehaviour{
 
+	public HexCoordinates currentCoord;
 
 	// Status Attributes
-	[SerializeField]
     public string name;
 
     public int currentHP;
@@ -49,7 +49,7 @@ public class Unit : MonoBehaviour{
 	#endregion
 
 	void Start() {
-		//coordinates = HexCoordinates.FromPosition (transform.position);
+		currentCoord = HexCoordinates.FromPosition (transform.position);
 	}
 
 }

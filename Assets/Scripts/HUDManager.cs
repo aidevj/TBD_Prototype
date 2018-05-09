@@ -13,6 +13,8 @@ public class HUDManager : MonoBehaviour {
 	public GameObject activeUnitObj;
 	public GameObject HPTextObj;
 	public GameObject APTextObj;
+	public GameObject HPBar;
+	public GameObject APBar;
 
 	// Text components of corresponding HUD objs
 	Text activeUnitText;
@@ -29,7 +31,10 @@ public class HUDManager : MonoBehaviour {
 
 	}
 
-	void Update () {}
+	void Update () {
+		// Attach currentUnit HP and AP to 
+
+	}
 
 	public void UpdateActiveUnitText(string newText) {
 		activeUnitText.text = newText;

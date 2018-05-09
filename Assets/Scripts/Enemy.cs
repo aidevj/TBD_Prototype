@@ -8,6 +8,7 @@ public class Enemy : Unit {
 
 	// Use this for initialization
 	void Start () {
+		currentCoord = HexCoordinates.FromPosition (transform.position);
         currentAP = 15;
 	}
 	
