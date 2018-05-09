@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour {
 		TerrainEditorScript.gameObject.SetActive (true);
 		terrainEditorOpen = true;
 
-		UnitControllerManagerScript.ControllerOn = false;
+		UnitControllerManagerScript.DisableController();
 		HexGridScript.HexClickEnabled = false;
 		lastGameState = currentGameState;
 		currentGameState = GameState.Paused;
@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour {
 		TerrainEditorScript.gameObject.SetActive (false);
 		terrainEditorOpen = false;
 
-		UnitControllerManagerScript.ControllerOn = true;
+		UnitControllerManagerScript.EnableController();
 		HexGridScript.HexClickEnabled = true;
 		currentGameState = lastGameState;
 

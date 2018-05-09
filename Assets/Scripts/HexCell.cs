@@ -11,6 +11,8 @@ public class HexCell : MonoBehaviour {
 	public TerrainType terrainType;
 	public Unit occupant = null;				// unit occupying this hex
 
+	public int APCostMultiplier = 1;
+
 	public bool IsOccupied() {
 		if (occupant != null)
 			return true;

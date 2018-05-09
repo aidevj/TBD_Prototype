@@ -144,10 +144,12 @@ public class HexGrid : MonoBehaviour {
 			OccupyCell(index, ControllerScript.controlledUnit);
 
 			// unoccupy the last walked cell (top of stack) before pusnhing the new one (only if there is a last)
-			if (ControllerScript.currentPath.Count > 0) {
-				UnoccupyCell(HexCoordinates.GetIndexOfCoordinate(ControllerScript.currentPath.Peek(), width));
+			if (ControllerScript.currentPathWalked.Count > 0) {
+				UnoccupyCell(HexCoordinates.GetIndexOfCoordinate(ControllerScript.currentPathWalked.Peek(), width));
 				// Subtract AP per move (done here so it doesnt subtract until after moved at least once)
-				ControllerScript.controlledUnit.currentAP -= ControllerScript.controlledUnit.moveCost;
+				int thisAPCost = ControllerScript.controlledUnit.moveCost * cell.APCostMultiplier;
+				ControllerScript.currentPathAPCost.Push(thisAPCost);
+				ControllerScript.controlledUnit.currentAP -= thisAPCost;
 				HUDScript.UpdateAPBar();
 
 				// Push damages
@@ -157,6 +159,8 @@ public class HexGrid : MonoBehaviour {
 					if (ControllerScript.controlledUnit.currentHP <= 0) {
 						ControllerScript.controlledUnit.currentHP = 1;
 					}
+
+					HUDScript.UpdateHPBar();
 				}
 				else {
 					ControllerScript.pathDamage.Push(0);
@@ -164,7 +168,7 @@ public class HexGrid : MonoBehaviour {
 
 			}
 			// Push this new coord to the controller's current path stack
-			ControllerScript.currentPath.Push(coordinates);
+			ControllerScript.currentPathWalked.Push(coordinates);
 
 
 		}
@@ -201,6 +205,11 @@ public class HexGrid : MonoBehaviour {
 		if (type == TerrainType.Impassible) {
 			GameObject newWall = (GameObject)Instantiate (wallPrefab, cell.transform.position, Quaternion.identity);
 			newWall.transform.parent = cell.gameObject.transform;
+		}
+
+		// edit AP cost multipliers
+		if (type == TerrainType.RoughTerrain) {
+			cell.APCostMultiplier = 2;
 		}
 
 		hexMesh.Triangulate(cells);

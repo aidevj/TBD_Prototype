@@ -22,7 +22,9 @@ public class HUDManager : MonoBehaviour {
 	Text APText;
 
 	RectTransform APBarTransform;
+	RectTransform HPBarTransform;
 	float APBarMaxHeight;
+	float HPBarMaxHeight;
 
 
 	void Start () {
@@ -36,6 +38,8 @@ public class HUDManager : MonoBehaviour {
 		// Get transforms of bars
 		APBarTransform = APBar.GetComponent<RectTransform> ();
 		APBarMaxHeight = APBarTransform.sizeDelta.y;
+		HPBarTransform = HPBar.GetComponent<RectTransform> ();
+		HPBarMaxHeight = HPBarTransform.sizeDelta.y;
 	}
 
 	void Update () {
@@ -43,13 +47,22 @@ public class HUDManager : MonoBehaviour {
 	}
 
 	public void UpdateAPBar() {
-		// Change height of bars accordingly
 		APBarTransform.sizeDelta = new Vector2(
 			APBarTransform.sizeDelta.x, // NEVER CHANGE
 			APBarMaxHeight * ((float)UnitControllerScript.controlledUnit.currentAP / (float)UnitControllerScript.controlledUnit.maxAP)
 		);
 
 		APText.text = "AP " + UnitControllerScript.controlledUnit.currentAP + "/" + UnitControllerScript.controlledUnit.maxAP;
+	}
+
+	public void UpdateHPBar() {
+		HPBarTransform.sizeDelta = new Vector2(
+			HPBarTransform.sizeDelta.x, // NEVER CHANGE
+			HPBarMaxHeight * ((float)UnitControllerScript.controlledUnit.currentHP / (float)UnitControllerScript.controlledUnit.maxHP)
+		);
+
+		HPText.text = "HP " + UnitControllerScript.controlledUnit.currentHP + "/" + UnitControllerScript.controlledUnit.maxHP;
+
 	}
 
 

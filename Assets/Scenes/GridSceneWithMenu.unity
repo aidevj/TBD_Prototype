@@ -5234,7 +5234,7 @@ MonoBehaviour:
   UnitControllerManagerScript: {fileID: 1374363098}
   HUDManagerScript: {fileID: 465919819}
   TerrainEditorScript: {fileID: 1025608183}
-  HexGridScript: {fileID: 0}
+  HexGridScript: {fileID: 1520068194}
   currentGameState: 0
   lastGameState: 0
   terrainEditorOpen: 0

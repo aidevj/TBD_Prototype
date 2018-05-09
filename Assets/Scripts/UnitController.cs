@@ -15,31 +15,31 @@ public class UnitController : MonoBehaviour {
 
 	public HexGrid hexGrid;
 
-	//[HideInInspector] 
-	public List<Unit> units = new List<Unit> ();
-	public List<Enemy> enemies = new List<Enemy> ();
+	[HideInInspector]public List<Unit> units = new List<Unit> ();
+	[HideInInspector]public List<Enemy> enemies = new List<Enemy> ();
 
 	//public List<Unit> currentTurnUnits;						// list of what side is currently being controlled
 
-	private bool controllerOn = true;					// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
+	[SerializeField]private bool controllerOn = true;							// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
 
-	public GameObject unitHolderObj;					// gameobject called "Units" that holds all the unit in play
+	public GameObject unitHolderObj;							// gameobject called "Units" that holds all the unit in play
 	public GameObject enemyHolderObj;
-	public Unit controlledUnit;							// the Unit controlled currently
+	public Unit controlledUnit;									// the Unit controlled currently
 	private Transform unitTransform;
 	private int currentUnitIndex = 0;
     private int currentEnemyIndex = 0;
 
-    public bool isPlayerTurn; //is it the players turn or not
+    public bool isPlayerTurn; 
 
 	// Coordinates for pathfinding/movement
-	public HexCoordinates initialCoord;														// first position of unit since last move apply or since switched to
-	public Stack<HexCoordinates> currentPath = new Stack<HexCoordinates>();					// Stack of current walked path
-		// NOTE: THIS SHOULD NEVER INCLUDE THE INITIAL COORD (at least not for now)
+	[HideInInspector]public HexCoordinates initialCoord;														// first position of unit since last move apply or since switched to
+	[HideInInspector]public Stack<HexCoordinates> currentPathWalked = new Stack<HexCoordinates>();					// Stack of current walked path
+																							// NOTE: THIS SHOULD NEVER INCLUDE THE INITIAL COORD (at least not for now)
+	[HideInInspector]public Stack<int> currentPathAPCost = new Stack<int>();	// keeps track of the AP costs during the  current path made
 
-	public Stack<int> pathDamage = new Stack<int> ();		// any damage accumulated during the path made
+	[HideInInspector]public Stack<int> pathDamage = new Stack<int> ();		// keeps track of any damage accumulated during the path made
 
-	public Unit target;										// target of action
+	public Unit target;										// target of action for currently controlled unit
 
 	// Properties
 	public Transform UnitTransform {
@@ -78,7 +78,10 @@ public class UnitController : MonoBehaviour {
 		controlledUnit = units[0];
 		controlledUnit.gameObject.layer = 0;
 		unitTransform = controlledUnit.transform;
+
 		HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
+		HUDManagerScript.UpdateHPBar();
+		HUDManagerScript.UpdateAPBar();
 	}
 
 	/// Cycles through controllable units (skips over dead units)
@@ -87,7 +90,7 @@ public class UnitController : MonoBehaviour {
         if(isPlayerTurn)
         {
             // Apply latest path first if there is one
-            if (currentPath.Count != 0)
+            if (currentPathWalked.Count != 0)
                 ApplyMove();
 
             // set the coordinate of the unit from which you are switching to occupied
@@ -107,15 +110,8 @@ public class UnitController : MonoBehaviour {
             if (currentUnitIndex > units.Count - 1) // loop through list
                 currentUnitIndex = 0;
 
-            controlledUnit = units[currentUnitIndex];
-
-
-            unitTransform = controlledUnit.transform;
-
-            // set initial coord
-            initialCoord = GetCurrentCoordinate();
-
-
+			ChangeControlledUnit (units[currentUnitIndex]);
+      
             // Change all of the unit's layers to 8 before changing the current to 0
             foreach (Unit u in units)
             {
@@ -123,15 +119,12 @@ public class UnitController : MonoBehaviour {
             }
             controlledUnit.gameObject.layer = 0;
 
-            // Update UI with Current Unit data
-            HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
-            HUDManagerScript.UpdateAPBar();
-            // CHANGE CORRESPONDING UNITS ACTIONS LIST HERE
         }
+
         if(!isPlayerTurn)
         {
             // Apply latest path first if there is one
-            if (currentPath.Count != 0)
+            if (currentPathWalked.Count != 0)
                 ApplyMove();
 
             // set the coordinate of the unit from which you are switching to occupied
@@ -150,14 +143,7 @@ public class UnitController : MonoBehaviour {
             if (currentEnemyIndex > enemies.Count - 1) // loop through list
                 currentEnemyIndex = 0;
 
-            controlledUnit = enemies[currentEnemyIndex];
-
-
-            unitTransform = controlledUnit.transform;
-
-            // set initial coord
-            initialCoord = GetCurrentCoordinate();
-
+			ChangeControlledUnit (enemies [currentEnemyIndex]);
 
             // Change all of the unit's layers to 8 before changing the current to 0
             foreach (Unit e in enemies)
@@ -166,10 +152,7 @@ public class UnitController : MonoBehaviour {
             }
             controlledUnit.gameObject.layer = 0;
 
-            // Update UI with Current Unit data
-            HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
-            HUDManagerScript.UpdateAPBar();
-            // CHANGE CORRESPONDING UNITS ACTIONS LIST HERE
+            
         }
     }
 
@@ -181,28 +164,21 @@ public class UnitController : MonoBehaviour {
 
         if(isPlayerTurn)
         {
-            controlledUnit = units[0];
+			ChangeControlledUnit(units[0]);
+
             foreach (Unit u in units)
             {
                 u.currentAP = u.maxAP;
             }
 
-			// set initial coord and transform to be accessed
-			unitTransform = controlledUnit.transform;
-			initialCoord = GetCurrentCoordinate();
         }
         if(!isPlayerTurn)
         {
-            controlledUnit = enemies[0];
+			ChangeControlledUnit (enemies [0]);
             foreach (Enemy e in enemies)
             {
                 e.currentAP = e.maxAP;
             }
-
-			// set initial coord and transform to be accessed
-			unitTransform = controlledUnit.transform;
-			initialCoord = GetCurrentCoordinate();
-
         }
     }
 
@@ -216,8 +192,6 @@ public class UnitController : MonoBehaviour {
 		// if character runs out of AP, disable controller
 		if (controlledUnit.currentAP <= 0)
 			controllerOn = false;
-		else
-			controllerOn = true;
 
 	}
 
@@ -236,24 +210,50 @@ public class UnitController : MonoBehaviour {
 
 	/// <summary>
 	/// Confirms the last path movement and consumes the appropriate amount of AP <-- this is handled in TouchCell() of HexGrid.cs
-	/// according to the size of the currentPath stack
+	/// according to the size of the currentPathWalked stack
 	/// </summary>
 	public void ApplyMove() {
 		// clears current stack of moves
-		currentPath.Clear ();
+		pathDamage.Clear();
+		currentPathAPCost.Clear ();
+		currentPathWalked.Clear ();
 
 		// set NEW initial coord
 		initialCoord = GetCurrentCoordinate();
+
+		HUDManagerScript.UpdateHPBar();
+		HUDManagerScript.UpdateAPBar();
 
 		// TO DO: clear the grid colors for walking (USE RESTORE GRID LATER)
 		hexGrid.ResetGridColorToBlank();
 	}
 
 	public void UndoMove(){
-		// TO DO: return unit position to the initial coordinate position (cell's transform.position)
-		//			clear currentPath stack
-		// refresh unit's HP lost according to damage stack
-		currentPath.Clear ();
+		// return unit position to the initial coordinate position (cell's transform.position)
+		unitTransform.position = new Vector3 (
+			hexGrid.Cells[HexCoordinates.GetIndexOfCoordinate(initialCoord, hexGrid.width)].transform.position.x, 
+			unitTransform.position.y, 
+			hexGrid.Cells[HexCoordinates.GetIndexOfCoordinate(initialCoord, hexGrid.width)].transform.position.z
+		);
+
+		// set new initial coord after moving
+		initialCoord = GetCurrentCoordinate();
+
+		// restore lost HP and AP
+		while (pathDamage.Count > 0) {
+			controlledUnit.currentHP += pathDamage.Pop();
+		}
+		while (currentPathAPCost.Count > 0) {
+			controlledUnit.currentAP += currentPathAPCost.Pop();
+		}
+
+		currentPathWalked.Clear ();
+
+		HUDManagerScript.UpdateHPBar();
+		HUDManagerScript.UpdateAPBar();
+
+		// TO DO: clear the grid colors for walking (USE RESTORE GRID LATER)
+		hexGrid.ResetGridColorToBlank();
 	}
 
 	/// <summary>
@@ -283,7 +283,6 @@ public class UnitController : MonoBehaviour {
 			}
 
 		}
-		//otherwise return false
 		return false;
 	}
 
@@ -305,6 +304,12 @@ public class UnitController : MonoBehaviour {
 		controlledUnit = newUnit;
 		unitTransform = controlledUnit.transform;
 		initialCoord = GetCurrentCoordinate();
+
+		// Update UI with Current Unit data
+		HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
+		HUDManagerScript.UpdateHPBar();
+		HUDManagerScript.UpdateAPBar();
+		// CHANGE CORRESPONDING UNITS ACTIONS LIST HERE
 	}
 
 		
