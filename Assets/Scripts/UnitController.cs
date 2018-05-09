@@ -19,6 +19,8 @@ public class UnitController : MonoBehaviour {
 	public List<Unit> units = new List<Unit> ();
 	public List<Enemy> enemies = new List<Enemy> ();
 
+	//public List<Unit> currentTurnUnits;						// list of what side is currently being controlled
+
 	private bool controllerOn = true;					// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
 
 	public GameObject unitHolderObj;					// gameobject called "Units" that holds all the unit in play
@@ -37,7 +39,7 @@ public class UnitController : MonoBehaviour {
 
 	public Stack<int> pathDamage = new Stack<int> ();		// any damage accumulated during the path made
 
-	public Unit target;					// target of action
+	public Unit target;										// target of action
 
 	// Properties
 	public Transform UnitTransform {
@@ -74,7 +76,7 @@ public class UnitController : MonoBehaviour {
 
 		// Default the first in the list to the current controlled unit
 		controlledUnit = units[0];
-		controlledUnit.gameObject.layer = 0;		// CURRENT CONTROLLED UNIT MUST BE ON LAYER 0, OTHERS MUST BE ON 8
+		controlledUnit.gameObject.layer = 0;
 		unitTransform = controlledUnit.transform;
 		HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
 	}
@@ -136,7 +138,6 @@ public class UnitController : MonoBehaviour {
             hexGrid.OccupyCell(HexCoordinates.GetIndexOfCoordinate(GetCurrentCoordinate(), hexGrid.width), controlledUnit);
 
             // Now increment to next unit in list
-
             // Skip if dead
             do
             {
@@ -177,6 +178,7 @@ public class UnitController : MonoBehaviour {
         isPlayerTurn = !isPlayerTurn; // switch turns
         currentUnitIndex = 0;
         currentEnemyIndex = 0;
+
         if(isPlayerTurn)
         {
             controlledUnit = units[0];
@@ -184,6 +186,10 @@ public class UnitController : MonoBehaviour {
             {
                 u.currentAP = u.maxAP;
             }
+
+			// set initial coord and transform to be accessed
+			unitTransform = controlledUnit.transform;
+			initialCoord = GetCurrentCoordinate();
         }
         if(!isPlayerTurn)
         {
@@ -192,6 +198,11 @@ public class UnitController : MonoBehaviour {
             {
                 e.currentAP = e.maxAP;
             }
+
+			// set initial coord and transform to be accessed
+			unitTransform = controlledUnit.transform;
+			initialCoord = GetCurrentCoordinate();
+
         }
     }
 
@@ -282,6 +293,18 @@ public class UnitController : MonoBehaviour {
 	/// <returns>The current location.</returns>
 	HexCoordinates GetCurrentCoordinate() {
 		return HexCoordinates.FromPosition(unitTransform.position);
+	}
+
+	/// <summary>
+	/// Helper function to change the controlled Unit and assign all the necesary values.
+	/// Call when cycling through units or switching turns, etc.
+	/// Sets the controlledUnity, the unitTransform, and the initialCoord.
+	/// </summary>
+	/// <param name="changeTo">Unit to change the controlled unit to.</param>
+	private void ChangeControlledUnit(Unit newUnit){
+		controlledUnit = newUnit;
+		unitTransform = controlledUnit.transform;
+		initialCoord = GetCurrentCoordinate();
 	}
 
 		
