@@ -3,8 +3,6 @@ using UnityEngine;
 using UnityEngine.Collections;
 using System.Collections.Generic;
 
-public enum Status { Alive, Dead };
-
 /// <summary>
 /// Base Class for any Unit (ally) in the Game
 /// </summary>

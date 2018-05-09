@@ -48,6 +48,8 @@ public class HUDManager : MonoBehaviour {
 			APBarTransform.sizeDelta.x, // NEVER CHANGE
 			APBarMaxHeight * ((float)UnitControllerScript.controlledUnit.currentAP / (float)UnitControllerScript.controlledUnit.maxAP)
 		);
+
+		APText.text = "AP " + UnitControllerScript.controlledUnit.currentAP + "/" + UnitControllerScript.controlledUnit.maxAP;
 	}
 
 

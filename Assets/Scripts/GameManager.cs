@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour {
 	public UnitController UnitControllerManagerScript;
 	public HUDManager HUDManagerScript;
 	public TerrainEditor TerrainEditorScript;
+	public HexGrid HexGridScript;
 
 	// Gameplay properties
 	public GameState currentGameState;
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour {
 				CloseTerrainEditor ();
 			}
 			else {
+				// TO DO: UPON CLOSING, SAVE THIS 
 				OpenTerrainEditor ();
 			}
 		}
@@ -71,6 +73,7 @@ public class GameManager : MonoBehaviour {
 		terrainEditorOpen = true;
 
 		UnitControllerManagerScript.ControllerOn = false;
+		HexGridScript.HexClickEnabled = false;
 		lastGameState = currentGameState;
 		currentGameState = GameState.Paused;
 
@@ -81,6 +84,7 @@ public class GameManager : MonoBehaviour {
 		terrainEditorOpen = false;
 
 		UnitControllerManagerScript.ControllerOn = true;
+		HexGridScript.HexClickEnabled = true;
 		currentGameState = lastGameState;
 
 	}

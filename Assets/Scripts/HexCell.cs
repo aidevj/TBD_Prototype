@@ -9,5 +9,11 @@ public class HexCell : MonoBehaviour {
 
 	// Status Attributes
 	public TerrainType terrainType;
-	public bool isOccupied;	// is there a unit already on this hex
+	public Unit occupant = null;				// unit occupying this hex
+
+	public bool IsOccupied() {
+		if (occupant != null)
+			return true;
+		return false;
+	}
 }

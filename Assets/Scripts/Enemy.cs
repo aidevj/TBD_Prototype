@@ -5,14 +5,11 @@ using UnityEngine;
 public class Enemy : Unit {
 
    
-
-	// Use this for initialization
 	void Start () {
 		currentCoord = HexCoordinates.FromPosition (transform.position);
         currentAP = 15;
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		
 	}

@@ -32,6 +32,8 @@ public class UnitController : MonoBehaviour {
 	public Stack<HexCoordinates> currentPath = new Stack<HexCoordinates>();					// Stack of current walked path
 		// NOTE: THIS SHOULD NEVER INCLUDE THE INITIAL COORD (at least not for now)
 
+	public Stack<int> pathDamage = new Stack<int> ();		// any damage accumulated during the path made
+
 	public Unit target;					// target of action
 
 	// Properties
@@ -57,6 +59,13 @@ public class UnitController : MonoBehaviour {
 			enemies.Add (child.gameObject.GetComponent<Enemy> ());
 		}
 
+		// occupy cells with units from the start
+		foreach (Unit u in units) {
+			hexGrid.OccupyCell (HexCoordinates.GetIndexOfCoordinate (u.currentCoord, hexGrid.width), u);
+		}
+		foreach (Enemy e in enemies) {
+			hexGrid.OccupyCell (HexCoordinates.GetIndexOfCoordinate (e.currentCoord, hexGrid.width), e);
+		}
 
 		// Default the first in the list to the current controlled unit
 		controlledUnit = units[0];
@@ -72,7 +81,7 @@ public class UnitController : MonoBehaviour {
 			ApplyMove();
 
 		// set the coordinate of the unit from which you are switching to occupied
-		hexGrid.OccupyCell(HexCoordinates.GetIndexOfCoordinate(GetCurrentCoordinate(), hexGrid.width));
+		hexGrid.OccupyCell(HexCoordinates.GetIndexOfCoordinate(GetCurrentCoordinate(), hexGrid.width), controlledUnit);
 
 		// Now increment to next unit in list
 
@@ -152,6 +161,7 @@ public class UnitController : MonoBehaviour {
 	public void UndoMove(){
 		// TO DO: return unit position to the initial coordinate position (cell's transform.position)
 		//			clear currentPath stack
+		// refresh unit's HP lost according to damage stack
 		currentPath.Clear ();
 	}
 
@@ -176,7 +186,7 @@ public class UnitController : MonoBehaviour {
 			// if any adjacent cells are occupied, return true
 			int index = HexCoordinates.GetIndexOfCoordinate(h, hexGrid.width);
 			if (index >= 0) {	// needed to avoid index out of range errors for edge hexes
-				if (hexGrid.Cells [index].isOccupied == true) {
+				if (hexGrid.Cells [index].IsOccupied() == true) {
 					return true;
 				}
 			}

@@ -27,11 +27,8 @@ public class TerrainEditor : MonoBehaviour {
 		SelectColor (0);
 	}
 
-	void Start() {
-	}
-
 	void Update () {
-		if (Input.GetMouseButton (0)) {
+		if (Input.GetMouseButtonDown (0)) {
 			HandleInput ();
 		}
 	}

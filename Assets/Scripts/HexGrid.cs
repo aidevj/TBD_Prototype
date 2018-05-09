@@ -28,6 +28,8 @@ public class HexGrid : MonoBehaviour {
 	public HexCell cellPrefab;
 	public Text cellLabelPrefab;
 
+	public Color targetColor;
+
 	Canvas gridCanvas;
 	HexMesh hexMesh;
 
@@ -42,6 +44,8 @@ public class HexGrid : MonoBehaviour {
 
 	private HexCoordinates lastCoords;
 	private string lastCoordinatesAsString = "";
+
+	public bool HexClickEnabled = true;		// cahnged in gamemanager
 
 	// Read-only cells
 	public HexCell[] Cells {
@@ -68,12 +72,6 @@ public class HexGrid : MonoBehaviour {
 		units = ControllerScript.units;
 		enemies = ControllerScript.enemies;
 
-		foreach (Unit u in units) {
-			OccupyCell (HexCoordinates.GetIndexOfCoordinate (u.currentCoord, width));
-		}
-		foreach (Enemy e in enemies) {
-			OccupyCell (HexCoordinates.GetIndexOfCoordinate (e.currentCoord, width));
-		}
 
 	}
 
@@ -81,11 +79,47 @@ public class HexGrid : MonoBehaviour {
 		// Must get current unit in update to update when current unit is changes
 		currentUnit = ControllerScript.controlledUnit.GetComponent<Unit>();
 
-		// get position of unit for movement
-		TouchCell (currentUnit.transform.position);
+		if (HexClickEnabled == true) {
+			// get position of unit for movement
+			TouchCell (currentUnit.transform.position);
+
+			// handle target selection
+			if (Input.GetMouseButtonDown (0)) {
+				Ray inputRay = Camera.main.ScreenPointToRay (Input.mousePosition);
+				RaycastHit hit;
+				if (Physics.Raycast (inputRay, out hit)) {
+					SelectTarget (hit.point);
+				}
+
+			}
+		}
+	}
+
+	/// <summary>
+	/// Selects a target on a position on the grid
+	/// </summary>
+	public void SelectTarget(Vector3 position) {
+		position = transform.InverseTransformPoint(position);
+
+		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+
+		//if (LogHexTouches) Debug.Log("Touched at: " + coordinates.ToString());
+
+		int index = HexCoordinates.GetIndexOfCoordinate(coordinates, width);
+		HexCell cell = cells[index];
+
+		// if there is an enemy there, assign as target
+		if (cell.IsOccupied () == true && cell.occupant.tag == "Enemy") {
+			ControllerScript.target = cell.occupant;
+			cell.color = targetColor;
+
+			hexMesh.Triangulate (cells);
+		} else {
+			Debug.LogWarning ("No enemy to target.");
+		}
+
 
 	}
-		
 
 	/// <summary>
 	/// Used for unit movement
@@ -107,7 +141,7 @@ public class HexGrid : MonoBehaviour {
 			cell.color = activeColor;
 			hexMesh.Triangulate(cells);
 
-			OccupyCell(index);
+			OccupyCell(index, ControllerScript.controlledUnit);
 
 			// unoccupy the last walked cell (top of stack) before pusnhing the new one (only if there is a last)
 			if (ControllerScript.currentPath.Count > 0) {
@@ -115,6 +149,19 @@ public class HexGrid : MonoBehaviour {
 				// Subtract AP per move (done here so it doesnt subtract until after moved at least once)
 				ControllerScript.controlledUnit.currentAP -= ControllerScript.controlledUnit.moveCost;
 				HUDScript.UpdateAPBar();
+
+				// Push damages
+				if (cell.terrainType == TerrainType.Poison) {
+					ControllerScript.pathDamage.Push(5);
+					ControllerScript.controlledUnit.currentHP -= 5;
+					if (ControllerScript.controlledUnit.currentHP <= 0) {
+						ControllerScript.controlledUnit.currentHP = 1;
+					}
+				}
+				else {
+					ControllerScript.pathDamage.Push(0);
+				}
+
 			}
 			// Push this new coord to the controller's current path stack
 			ControllerScript.currentPath.Push(coordinates);
@@ -141,7 +188,7 @@ public class HexGrid : MonoBehaviour {
 
 		if (LogHexTouches) Debug.Log("Touched at: " + coordinates.ToString());
 
-		int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
+		int index = HexCoordinates.GetIndexOfCoordinate(coordinates, width);
 		HexCell cell = cells[index];
 
 		// if the same, dont do anything
@@ -167,6 +214,7 @@ public class HexGrid : MonoBehaviour {
 		foreach (HexCell cell in cells) {
 			cell.color = defaultColor;
 		}
+		hexMesh.Triangulate(cells);
 	}
 
 	/// <summary>
@@ -199,7 +247,6 @@ public class HexGrid : MonoBehaviour {
 		// default attributes of cell
 		cell.color = defaultColor;
 		cell.terrainType = TerrainType.Normal;
-		cell.isOccupied = false;
 
 		// instantiate the labels and show cell coordinates
 		Text label = Instantiate<Text>(cellLabelPrefab);
@@ -215,12 +262,12 @@ public class HexGrid : MonoBehaviour {
 	/// Makes the isOccupied attribute of the specified cell true.
 	/// </summary>
 	/// <param name="index">Index.</param>
-	public void OccupyCell(int index) {
-		cells [index].isOccupied = true;
+	public void OccupyCell(int index, Unit newOccupant) {
+		cells [index].occupant = newOccupant;
 	}
 
 	public void UnoccupyCell(int index) {
-		cells [index].isOccupied = false;
+		cells [index].occupant = null;
 	}
 
 
