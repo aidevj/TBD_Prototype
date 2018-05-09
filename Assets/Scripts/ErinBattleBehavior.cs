@@ -68,7 +68,7 @@ public class ErinBattleBehavior : MonoBehaviour {
     void Start () {
         isPlayerTurn = true;
         PlayerBackground.enabled = true;
-        EnemyBackground.enabled = false;
+        EnemyBackground.enabled = true;//temp
         EndMenu.enabled = false;
         totalUHP = 0;
         totalEHP = 0; 
@@ -179,7 +179,7 @@ public class ErinBattleBehavior : MonoBehaviour {
         if(isPlayerTurn)
         {
             PlayerBackground.enabled = true;
-            EnemyBackground.enabled = false;
+            EnemyBackground.enabled = true;//temp
             ActiveUnit = P1;
             foreach(Unit p in players)
             {

@@ -25,7 +25,10 @@ public class UnitController : MonoBehaviour {
 	public GameObject enemyHolderObj;
 	public Unit controlledUnit;							// the Unit controlled currently
 	private Transform unitTransform;
-	private int currentUnitIndex = 0;	
+	private int currentUnitIndex = 0;
+    private int currentEnemyIndex = 0;
+
+    public bool isPlayerTurn; //is it the players turn or not
 
 	// Coordinates for pathfinding/movement
 	public HexCoordinates initialCoord;														// first position of unit since last move apply or since switched to
@@ -48,6 +51,8 @@ public class UnitController : MonoBehaviour {
 
 	void Start () {
 		HUDManagerScript = GameObject.Find ("UICanvas").GetComponent<HUDManager> ();
+
+        isPlayerTurn = true;
 
 		// Populate the Units list
 		foreach (Transform child in unitHolderObj.transform) {
@@ -76,50 +81,125 @@ public class UnitController : MonoBehaviour {
 
 	/// Cycles through controllable units (skips over dead units)
 	public void CycleUnit() {
-		// Apply latest path first if there is one
-		if (currentPath.Count != 0 )
-			ApplyMove();
 
-		// set the coordinate of the unit from which you are switching to occupied
-		hexGrid.OccupyCell(HexCoordinates.GetIndexOfCoordinate(GetCurrentCoordinate(), hexGrid.width), controlledUnit);
+        if(isPlayerTurn)
+        {
+            // Apply latest path first if there is one
+            if (currentPath.Count != 0)
+                ApplyMove();
 
-		// Now increment to next unit in list
+            // set the coordinate of the unit from which you are switching to occupied
+            hexGrid.OccupyCell(HexCoordinates.GetIndexOfCoordinate(GetCurrentCoordinate(), hexGrid.width), controlledUnit);
 
-		// Skip if dead
-		do {
-			currentUnitIndex++;
-			if (currentUnitIndex > units.Count - 1)	// loop through list
-				currentUnitIndex = 0;
-		} while (units [currentUnitIndex].status == Status.Dead);
+            // Now increment to next unit in list
 
-
-		if (currentUnitIndex > units.Count - 1)	// loop through list
-			currentUnitIndex = 0;
-
-		controlledUnit = units[currentUnitIndex];
-
-		
-		unitTransform = controlledUnit.transform;
-
-		// set initial coord
-		initialCoord = GetCurrentCoordinate();
+            // Skip if dead
+            do
+            {
+                currentUnitIndex++;
+                if (currentUnitIndex > units.Count - 1) // loop through list
+                    currentUnitIndex = 0;
+            } while (units[currentUnitIndex].status == Status.Dead);
 
 
-		// Change all of the unit's layers to 8 before changing the current to 0
-		foreach (Unit u in units) {
-			u.gameObject.layer = 8;
-		}
-		controlledUnit.gameObject.layer = 0;
+            if (currentUnitIndex > units.Count - 1) // loop through list
+                currentUnitIndex = 0;
 
-		// Update UI with Current Unit data
-		HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
-		HUDManagerScript.UpdateAPBar();
-		// CHANGE CORRESPONDING UNITS ACTIONS LIST HERE
-	}
+            controlledUnit = units[currentUnitIndex];
+
+
+            unitTransform = controlledUnit.transform;
+
+            // set initial coord
+            initialCoord = GetCurrentCoordinate();
+
+
+            // Change all of the unit's layers to 8 before changing the current to 0
+            foreach (Unit u in units)
+            {
+                u.gameObject.layer = 8;
+            }
+            controlledUnit.gameObject.layer = 0;
+
+            // Update UI with Current Unit data
+            HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
+            HUDManagerScript.UpdateAPBar();
+            // CHANGE CORRESPONDING UNITS ACTIONS LIST HERE
+        }
+        if(!isPlayerTurn)
+        {
+            // Apply latest path first if there is one
+            if (currentPath.Count != 0)
+                ApplyMove();
+
+            // set the coordinate of the unit from which you are switching to occupied
+            hexGrid.OccupyCell(HexCoordinates.GetIndexOfCoordinate(GetCurrentCoordinate(), hexGrid.width), controlledUnit);
+
+            // Now increment to next unit in list
+
+            // Skip if dead
+            do
+            {
+                currentEnemyIndex++;
+                if (currentEnemyIndex > enemies.Count - 1) // loop through list
+                    currentEnemyIndex = 0;
+            } while (enemies[currentEnemyIndex].status == Status.Dead);
+
+
+            if (currentEnemyIndex > enemies.Count - 1) // loop through list
+                currentEnemyIndex = 0;
+
+            controlledUnit = enemies[currentEnemyIndex];
+
+
+            unitTransform = controlledUnit.transform;
+
+            // set initial coord
+            initialCoord = GetCurrentCoordinate();
+
+
+            // Change all of the unit's layers to 8 before changing the current to 0
+            foreach (Unit e in enemies)
+            {
+                e.gameObject.layer = 8;
+            }
+            controlledUnit.gameObject.layer = 0;
+
+            // Update UI with Current Unit data
+            HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
+            HUDManagerScript.UpdateAPBar();
+            // CHANGE CORRESPONDING UNITS ACTIONS LIST HERE
+        }
+    }
+
+    public void ChangeTurn()
+    {
+        isPlayerTurn = !isPlayerTurn; // switch turns
+        currentUnitIndex = 0;
+        currentEnemyIndex = 0;
+        if(isPlayerTurn)
+        {
+            controlledUnit = units[0];
+            foreach (Unit u in units)
+            {
+                u.currentAP = u.maxAP;
+            }
+        }
+        if(!isPlayerTurn)
+        {
+            controlledUnit = enemies[0];
+            foreach (Enemy e in enemies)
+            {
+                e.currentAP = e.maxAP;
+            }
+        }
+    }
 
 	void Update () {
-		// Movement
-		if (controllerOn)
+        HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
+
+        // Movement
+        if (controllerOn)
 			unitTransform.Translate (Input.GetAxis ("Horizontal_Player") * speed, Input.GetAxis ("Vertical_Player"), 0);
 
 		// if character runs out of AP, disable controller

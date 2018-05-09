@@ -39,7 +39,7 @@ public class HUDManager : MonoBehaviour {
 	}
 
 	void Update () {
-		
+        UpdateAPBar();
 	}
 
 	public void UpdateAPBar() {
