@@ -33,3 +33,12 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+<<<<<<< HEAD
+=======
+*.userprefs
+*.userprefs
+TBD_Prototype.userprefs
+TBD_Prototype.userprefs
+TBD_Prototype.userprefs
+*.userprefs
+>>>>>>> develop
