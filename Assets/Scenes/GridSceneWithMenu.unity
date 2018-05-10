@@ -593,7 +593,7 @@ Prefab:
     - target: {fileID: 224230058717346878, guid: c1351ea595231514bbcba8e0affc4a71,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 224230058717346878, guid: c1351ea595231514bbcba8e0affc4a71,
         type: 2}
@@ -1548,11 +1548,11 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 264938316}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 269, y: 174, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1001 &308352734
 Prefab:
@@ -2047,7 +2047,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4396483242403244, guid: f1da71e9974202a4695e02930ece4c60, type: 2}
       propertyPath: m_RootOrder
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f1da71e9974202a4695e02930ece4c60, type: 2}
@@ -2415,7 +2415,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &565515776
 MonoBehaviour:
@@ -4002,6 +4002,7 @@ MonoBehaviour:
   hexGrid: {fileID: 1520068194}
   units: []
   enemies: []
+  controllerOn: 1
   unitHolderObj: {fileID: 733985515}
   enemyHolderObj: {fileID: 514340473}
   controlledUnit: {fileID: 0}
@@ -4022,7 +4023,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1391108495
 GameObject:
@@ -4484,7 +4485,7 @@ GameObject:
   - component: {fileID: 1510102311}
   - component: {fileID: 1510102310}
   m_Layer: 5
-  m_Name: Text
+  m_Name: ButtonInfoText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4529,10 +4530,10 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 12
+    m_FontSize: 10
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -4540,7 +4541,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 't: toggle terrain editor'
+  m_Text: 't: toggle terrain editor
+
+    esc: return to main screen'
 --- !u!222 &1510102311
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5218,7 +5221,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1692777307
 MonoBehaviour:

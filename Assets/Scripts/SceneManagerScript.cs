@@ -12,12 +12,14 @@ public class SceneManagerScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			LoadLevel (0);
+		}
 	}
 
     public void LoadLevel(int levelNum)
     {
-        SceneManager.LoadScene(levelNum);
+        SceneManager.LoadScene(levelNum, LoadSceneMode.Single);
     }
 
     public void QuitGame()

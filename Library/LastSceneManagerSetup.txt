@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/GridSceneWithMenu.unity
+- path: Assets/Scenes/BattleTesterUI.unity
   isLoaded: 1
   isActive: 1
