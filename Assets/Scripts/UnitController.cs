@@ -1,6 +1,5 @@
 ﻿// Aiden
 using UnityEngine;
-using UnityEngine.Collections;
 using System.Collections.Generic;
 
 /// <summary>
@@ -83,6 +82,7 @@ public class UnitController : MonoBehaviour {
 		HUDManagerScript.UpdateHPBar();
 		HUDManagerScript.UpdateAPBar();
 	}
+    
 
 	/// Cycles through controllable units (skips over dead units)
 	public void CycleUnit() {
@@ -186,8 +186,11 @@ public class UnitController : MonoBehaviour {
         HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
 
         // Movement
-        if (controllerOn)
-			unitTransform.Translate (Input.GetAxis ("Horizontal_Player") * speed, Input.GetAxis ("Vertical_Player"), 0);
+        if (controllerOn){
+            unitTransform.Translate(Input.GetAxis("Horizontal_Player") * speed, Input.GetAxis("Vertical_Player"), 0);
+            
+            //
+        }
 
 		// if character runs out of AP, disable controller
 		if (controlledUnit.currentAP <= 0)

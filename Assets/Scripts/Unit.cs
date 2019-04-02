@@ -1,6 +1,5 @@
 ﻿// Aiden
 using UnityEngine;
-using UnityEngine.Collections;
 using System.Collections.Generic;
 
 /// <summary>
