@@ -1,6 +1,5 @@
 ﻿// Aiden
 using UnityEngine;
-using UnityEngine.Collections;
 using System.Collections.Generic;
 
 /// <summary>
@@ -20,7 +19,7 @@ public class UnitController : MonoBehaviour {
 
 	//public List<Unit> currentTurnUnits;						// list of what side is currently being controlled
 
-	[SerializeField]private bool controllerOn = true;							// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
+	[SerializeField]private bool controllerOn = true;			// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
 
 	public GameObject unitHolderObj;							// gameobject called "Units" that holds all the unit in play
 	public GameObject enemyHolderObj;
@@ -33,13 +32,13 @@ public class UnitController : MonoBehaviour {
 
 	// Coordinates for pathfinding/movement
 	[HideInInspector]public HexCoordinates initialCoord;														// first position of unit since last move apply or since switched to
-	[HideInInspector]public Stack<HexCoordinates> currentPathWalked = new Stack<HexCoordinates>();					// Stack of current walked path
-																							// NOTE: THIS SHOULD NEVER INCLUDE THE INITIAL COORD (at least not for now)
+	[HideInInspector]public Stack<HexCoordinates> currentPathWalked = new Stack<HexCoordinates>();				// Stack of current walked path
+																							                    // NOTE: THIS SHOULD NEVER INCLUDE THE INITIAL COORD (at least not for now)
 	[HideInInspector]public Stack<int> currentPathAPCost = new Stack<int>();	// keeps track of the AP costs during the  current path made
 
 	[HideInInspector]public Stack<int> pathDamage = new Stack<int> ();		// keeps track of any damage accumulated during the path made
 
-	public Unit target;										// target of action for currently controlled unit
+	public Unit target;										                // target of action for currently controlled unit
 
 	// Properties
 	public Transform UnitTransform {
@@ -83,6 +82,7 @@ public class UnitController : MonoBehaviour {
 		HUDManagerScript.UpdateHPBar();
 		HUDManagerScript.UpdateAPBar();
 	}
+    
 
 	/// Cycles through controllable units (skips over dead units)
 	public void CycleUnit() {
@@ -186,8 +186,9 @@ public class UnitController : MonoBehaviour {
         HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
 
         // Movement
-        if (controllerOn)
-			unitTransform.Translate (Input.GetAxis ("Horizontal_Player") * speed, Input.GetAxis ("Vertical_Player"), 0);
+        if (controllerOn){
+            unitTransform.Translate(Input.GetAxis("Horizontal_Player") * speed, Input.GetAxis("Vertical_Player"), 0);
+        }
 
 		// if character runs out of AP, disable controller
 		if (controlledUnit.currentAP <= 0)

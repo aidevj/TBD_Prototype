@@ -1,7 +1,7 @@
 ﻿// Aiden
 using UnityEngine;
-using UnityEngine.Collections;
 using UnityEngine.UI;
+using UnityEditor;
 using System.Collections.Generic;
 
 /// <summary>
@@ -33,10 +33,10 @@ public class HexGrid : MonoBehaviour {
 	Canvas gridCanvas;
 	HexMesh hexMesh;
 
-	HexCell[] cells;										// Array of hexCells in the Grid
+	HexCell[] cells;                                        // Array of hexCells in the Grid
 
-	// hex type stuff
-	public Color defaultColor = Color.white;
+    // hex type stuff
+    public Color defaultColor = Color.white;
 	public Color activeColor = Color.cyan; 					// "touched"
 	public GameObject wallPrefab;
 	public GameObject mistFXPrefab;
@@ -71,6 +71,9 @@ public class HexGrid : MonoBehaviour {
 
 		units = ControllerScript.units;
 		enemies = ControllerScript.enemies;
+
+        // set default colors
+        defaultColor = new Color(1f, 1f, 1f, 0.25f);
 
 
 	}

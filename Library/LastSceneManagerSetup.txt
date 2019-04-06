@@ -1,8 +1,4 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/Scenes/BattleMenuScene.unity
-=======
-- path: Assets/Scenes/BattleTesterUI.unity
->>>>>>> develop
+- path: Assets/Scenes/GridScene.unity
   isLoaded: 1
   isActive: 1
