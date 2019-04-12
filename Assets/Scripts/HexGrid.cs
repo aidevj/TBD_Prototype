@@ -82,18 +82,25 @@ public class HexGrid : MonoBehaviour {
 		// Must get current unit in update to update when current unit is changes
 		currentUnit = ControllerScript.controlledUnit.GetComponent<Unit>();
 
+
+        // hex click should be enabled during: PLAYER CONTROL MODE, FREE ROAM CAM MODE, and TERRAIN EDITOR
 		if (HexClickEnabled == true) {
 			// get position of unit for movement
 			TouchCell (currentUnit.transform.position);
 
 			// handle target selection
+            // Hover (player control mode)
+                // since only Melee functionality so far, restrict selection be radial within 1 hex of the player
+            
+            // Click
+            // Hover (free cam mode)
+                 // same as terrain editor
 			if (Input.GetMouseButtonDown (0)) {
 				Ray inputRay = Camera.main.ScreenPointToRay (Input.mousePosition);
 				RaycastHit hit;
 				if (Physics.Raycast (inputRay, out hit)) {
 					SelectTarget (hit.point);
 				}
-
 			}
 		}
 	}
@@ -125,7 +132,7 @@ public class HexGrid : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Used for unit movement
+	/// Used for unit movement on the cells
 	/// </summary>
 	/// <param name="position">Position of unit.</param>
 	void TouchCell (Vector3 position) {
@@ -179,6 +186,15 @@ public class HexGrid : MonoBehaviour {
 
 		lastCoordinatesAsString = coordinates.ToString ();
 	}
+
+    /// <summary>
+    /// Used to change the color of the cells being targeted by the unit.
+    /// </summary>
+    /// <param name="position">Targeting position of hex.</param>
+    void TargetCell(Vector3 position)
+    {
+        // TO DO: 
+    }
 
 	/// <summary>
 	/// Modify's a cell from its position.

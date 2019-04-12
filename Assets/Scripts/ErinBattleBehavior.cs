@@ -63,6 +63,8 @@ public class ErinBattleBehavior : MonoBehaviour {
 
     int totalUHP;
     int totalEHP; //these are used to track if an entire team has died yet
+        // TO DO: whenever a player dies,  check how many allies are alive
+            // if 0, defeat state
 
     // Use this for initialization
     void Start () {

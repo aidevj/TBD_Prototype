@@ -17,13 +17,13 @@ public class UnitController : MonoBehaviour {
 	[HideInInspector]public List<Unit> units = new List<Unit> ();
 	[HideInInspector]public List<Enemy> enemies = new List<Enemy> ();
 
-	//public List<Unit> currentTurnUnits;						// list of what side is currently being controlled
+	//public List<Unit> currentTurnUnits;						                // list of what side is currently being controlled
 
-	[SerializeField]private bool controllerOn = true;			// determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
+	[SerializeField]private bool controllerOn = true;			                // determines if controller is allowed to work, ***disable (false) on layover screens, etc.***
 
-	public GameObject unitHolderObj;							// gameobject called "Units" that holds all the unit in play
+	public GameObject unitHolderObj;							                // gameobject called "Units" that holds all the unit in play
 	public GameObject enemyHolderObj;
-	public Unit controlledUnit;									// the Unit controlled currently
+	public Unit controlledUnit;									                // the Unit controlled currently
 	private Transform unitTransform;
 	private int currentUnitIndex = 0;
     private int currentEnemyIndex = 0;
@@ -36,9 +36,13 @@ public class UnitController : MonoBehaviour {
 																							                    // NOTE: THIS SHOULD NEVER INCLUDE THE INITIAL COORD (at least not for now)
 	[HideInInspector]public Stack<int> currentPathAPCost = new Stack<int>();	// keeps track of the AP costs during the  current path made
 
-	[HideInInspector]public Stack<int> pathDamage = new Stack<int> ();		// keeps track of any damage accumulated during the path made
+	[HideInInspector]public Stack<int> pathDamage = new Stack<int> ();		    // keeps track of any damage accumulated during the path made
 
-	public Unit target;										                // target of action for currently controlled unit
+	public Unit target;										                    // target of action for currently controlled unit
+
+    // movement attributes
+    private float rotationSpeed = 5.0f;
+    private Vector3 dir;                                                        // unit's direction of movement
 
 	// Properties
 	public Transform UnitTransform {
@@ -49,6 +53,11 @@ public class UnitController : MonoBehaviour {
 		set { controllerOn = value; }
 		get { return controllerOn; }
 	}
+
+    public Vector3 Dir
+    {
+        get { return dir; }
+    }
 
 	void Start () {
 		HUDManagerScript = GameObject.Find ("UICanvas").GetComponent<HUDManager> ();
@@ -83,9 +92,11 @@ public class UnitController : MonoBehaviour {
 		HUDManagerScript.UpdateAPBar();
 	}
     
+    // ===================== PLAYER ACTIONS ================================
 
 	/// Cycles through controllable units (skips over dead units)
-	public void CycleUnit() {
+	public void CycleUnit()
+    {
 
         if(isPlayerTurn)
         {
@@ -97,7 +108,6 @@ public class UnitController : MonoBehaviour {
             hexGrid.OccupyCell(HexCoordinates.GetIndexOfCoordinate(GetCurrentCoordinate(), hexGrid.width), controlledUnit);
 
             // Now increment to next unit in list
-
             // Skip if dead
             do
             {
@@ -107,7 +117,7 @@ public class UnitController : MonoBehaviour {
             } while (units[currentUnitIndex].status == Status.Dead);
 
 
-            if (currentUnitIndex > units.Count - 1) // loop through list
+            if (currentUnitIndex > units.Count - 1) // loop through list of party members
                 currentUnitIndex = 0;
 
 			ChangeControlledUnit (units[currentUnitIndex]);
@@ -131,7 +141,7 @@ public class UnitController : MonoBehaviour {
             hexGrid.OccupyCell(HexCoordinates.GetIndexOfCoordinate(GetCurrentCoordinate(), hexGrid.width), controlledUnit);
 
             // Now increment to next unit in list
-            // Skip if dead
+            // Skip to the next not dead ally
             do
             {
                 currentEnemyIndex++;
@@ -181,13 +191,90 @@ public class UnitController : MonoBehaviour {
             }
         }
     }
+    
+    /// <summary>
+    /// Confirms the last path movement and consumes the appropriate amount of AP --- this is handled in TouchCell() of HexGrid.cs
+    /// according to the size of the currentPathWalked stack
+    /// </summary>
+    public void ApplyMove()
+    {
+        // clears current stack of moves
+        pathDamage.Clear();
+        currentPathAPCost.Clear();
+        currentPathWalked.Clear();
 
-	void Update () {
+        // set NEW initial coord
+        initialCoord = GetCurrentCoordinate();
+
+        HUDManagerScript.UpdateHPBar();
+        HUDManagerScript.UpdateAPBar();
+
+        // TO DO: clear the grid colors for walking (USE RESTORE GRID LATER)
+        hexGrid.ResetGridColorToBlank();
+    }
+
+    public void UndoMove()
+    {
+        // return unit position to the initial coordinate position (cell's transform.position)
+        unitTransform.position = new Vector3(
+            hexGrid.Cells[HexCoordinates.GetIndexOfCoordinate(initialCoord, hexGrid.width)].transform.position.x,
+            unitTransform.position.y,
+            hexGrid.Cells[HexCoordinates.GetIndexOfCoordinate(initialCoord, hexGrid.width)].transform.position.z
+        );
+
+        // set new initial coord after moving
+        initialCoord = GetCurrentCoordinate();
+
+        // restore lost HP and AP
+        while (pathDamage.Count > 0)
+        {
+            controlledUnit.currentHP += pathDamage.Pop();
+        }
+        while (currentPathAPCost.Count > 0)
+        {
+            controlledUnit.currentAP += currentPathAPCost.Pop();
+        }
+
+        currentPathWalked.Clear();
+
+        HUDManagerScript.UpdateHPBar();
+        HUDManagerScript.UpdateAPBar();
+
+        // TO DO: clear the grid colors for walking (USE RESTORE GRID LATER)
+        hexGrid.ResetGridColorToBlank();
+    }
+
+    /// <summary>
+    /// Perform the normal attack for this unit.
+    /// </summary>
+    private void MeleeAttack(Unit target)
+    {
+        // TO DO
+    }
+
+
+    // ================== END OF PLAYER ACTIONS =====================================
+
+    void Update () {
         HUDManagerScript.UpdateActiveUnitText(controlledUnit.Name);
 
         // Movement
         if (controllerOn){
-            unitTransform.Translate(Input.GetAxis("Horizontal_Player") * speed, Input.GetAxis("Vertical_Player"), 0);
+            float x = Input.GetAxis("Horizontal_Player");
+            float z = Input.GetAxis("Vertical_Player");
+            dir = new Vector3(x, 0f, z);
+            unitTransform.Translate(dir * speed, Space.World);
+            //rotate model accordingly
+            //unitTransform.rotation = Quaternion.LookRotation(dir, Vector3.up);
+
+            if (dir != Vector3.zero)
+            {
+                unitTransform.rotation = Quaternion.Slerp(
+                    unitTransform.rotation,
+                    Quaternion.LookRotation(dir, Vector3.up),
+                    Time.deltaTime * rotationSpeed
+                    );
+            }
         }
 
 		// if character runs out of AP, disable controller
@@ -207,55 +294,6 @@ public class UnitController : MonoBehaviour {
 		Debug.Log ("Controller ENABLED");
 	}
 
-	// MOVEMENT---------------------------------------------------------
-
-	/// <summary>
-	/// Confirms the last path movement and consumes the appropriate amount of AP <-- this is handled in TouchCell() of HexGrid.cs
-	/// according to the size of the currentPathWalked stack
-	/// </summary>
-	public void ApplyMove() {
-		// clears current stack of moves
-		pathDamage.Clear();
-		currentPathAPCost.Clear ();
-		currentPathWalked.Clear ();
-
-		// set NEW initial coord
-		initialCoord = GetCurrentCoordinate();
-
-		HUDManagerScript.UpdateHPBar();
-		HUDManagerScript.UpdateAPBar();
-
-		// TO DO: clear the grid colors for walking (USE RESTORE GRID LATER)
-		hexGrid.ResetGridColorToBlank();
-	}
-
-	public void UndoMove(){
-		// return unit position to the initial coordinate position (cell's transform.position)
-		unitTransform.position = new Vector3 (
-			hexGrid.Cells[HexCoordinates.GetIndexOfCoordinate(initialCoord, hexGrid.width)].transform.position.x, 
-			unitTransform.position.y, 
-			hexGrid.Cells[HexCoordinates.GetIndexOfCoordinate(initialCoord, hexGrid.width)].transform.position.z
-		);
-
-		// set new initial coord after moving
-		initialCoord = GetCurrentCoordinate();
-
-		// restore lost HP and AP
-		while (pathDamage.Count > 0) {
-			controlledUnit.currentHP += pathDamage.Pop();
-		}
-		while (currentPathAPCost.Count > 0) {
-			controlledUnit.currentAP += currentPathAPCost.Pop();
-		}
-
-		currentPathWalked.Clear ();
-
-		HUDManagerScript.UpdateHPBar();
-		HUDManagerScript.UpdateAPBar();
-
-		// TO DO: clear the grid colors for walking (USE RESTORE GRID LATER)
-		hexGrid.ResetGridColorToBlank();
-	}
 
 	/// <summary>
 	/// Checkes if there are units adjacent to the currently controlled unit.

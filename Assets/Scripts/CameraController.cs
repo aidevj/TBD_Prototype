@@ -35,7 +35,8 @@ public class CameraController : MonoBehaviour {
             // TO DO: event handler for input
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
         {
-            currentCamMode = CamMode.PlayerFollow;
+            currentCamMode = CamMode.PlayerFollow; 
+            
         }
 
         //// if PLAYER MOVEMENT CONTROLS (LS/WASD) are pressed, change to PlayerFollow mode
@@ -49,20 +50,27 @@ public class CameraController : MonoBehaviour {
         {
             case CamMode.PlayerFollow:
                 // as soon as returning to this mode, smooth snap back to the target
-                CheckCurrentUnit();
+                CheckCurrentUnit(); // MAKE SURE THIS IS ALWAYS CALLED WHEN CHANGING TO PLAYER FOLLOW 
 
                 // fade out Player Actions HUD
                 if (ActionsHUDGroup.alpha < 1f)
                     ActionsHUDGroup.alpha += Time.deltaTime * fadeSpeed;
+
+                // allow targetting with mouse only within one hex of the current unit
+                // get raycast of mouse
           
                 // TO DO: Fade out all enemy stat HUD when entering this mode, if they were up
 
 
                 // Define a target position above and behind
-                Vector3 targetPosition = target.TransformPoint(offset);
+                //Vector3 targetPosition = target.TransformPoint(offset);
 
                 // Smoothly move the camera towards the target position
-                transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
+                // transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
+                transform.position = Vector3.Lerp(transform.position, target.position + offset, smoothTime);
+
+                // Rotate camera with player    //  NO
+                //transform.LookAt(target);
 
                 break;
             case CamMode.FreeRoam:
